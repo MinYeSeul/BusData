@@ -25,6 +25,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends Activity {
@@ -49,6 +51,12 @@ public class MainActivity extends Activity {
     //경도와 위도 변수 선언
     double longitude;
     double latitude;
+
+    int minute = 0;
+    // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 선언
+    boolean check = true;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +94,7 @@ public class MainActivity extends Activity {
                     1,
                     //gpslistner 연결
                     gpsLocationListener);
+
         }
 
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -104,6 +113,25 @@ public class MainActivity extends Activity {
 //
 //                switch( v.getId() ){
 //                    case R.id.button2:
+
+        getArrivalData();
+
+        // http://blog.naver.com/PostView.nhn?blogId=ssarang8649&logNo=220947884163 참고
+        TimerTask tt = new TimerTask() {
+            @Override
+            public void run() {
+                getArrivalData();
+            }
+        };
+
+        // 버스도착예정시간을 새로고침하기 위한 타이머 _ 1분 간격으로 업데이트되도록 함.
+        Timer timer = new Timer();
+        timer.schedule(tt, 0, 60000);
+
+    }
+
+    // TextView 에 도착예정 버스를 set 해주고 읽어주는 함수
+    private void getArrivalData() {
 
         new Thread(new Runnable() {
             @Override
@@ -143,6 +171,7 @@ public class MainActivity extends Activity {
 
             }
         }).start();
+
     }
 
     //https://bottlecok.tistory.com/54 참고
@@ -216,28 +245,36 @@ public class MainActivity extends Activity {
                             //그 옆의
                             xpp.next();
                             //초를 가져와서 분으로 바꿈
-                            int minute = Integer.parseInt(xpp.getText()) / 60;
+                            minute = Integer.parseInt(xpp.getText()) / 60;
+
+                            // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 세팅
+                            if (minute > 5) check = false;
+                            else check = true;
                             //버퍼에 순서대로 출력하고 싶은 형식으로 저장,
-                            buffer.append(minute + "" + "분 뒤에");
-                            buffer.append("\n");
+                            if (check) {
+                                buffer.append(minute + "" + "분 뒤에");
+                                buffer.append("\n");
+                            }
                             //다시 반복문 올라갔다가, item 태그의 이름별로 찾음.
-                        } else if (tag.equals("nodenm")) {
+                        } /** else if (tag.equals("nodenm")) {
                             //buffer.append("정류소명 :");
                             xpp.next();
                             buffer.append(xpp.getText() + "정류소에");
                             buffer.append("\n");
                             //... 아런식으로 반복해서 API에서 필요한 정보 변수에 저장
-                        } else if (tag.equals("routeno")) {
-                            //buffer.append("버스번호 :");
-                            xpp.next();
-                            buffer.append(xpp.getText() + "번 버스가 도착합니다");
-                            buffer.append("\n");
-                        } else if (tag.equals("vehicletp")) {
+                        } */else if (tag.equals("routeno")) {
+                            if (check) {
+                                //buffer.append("버스번호 :");
+                                xpp.next();
+                                buffer.append(xpp.getText() + "번 버스가 도착합니다");
+                                buffer.append("\n");
+                            }
+                        } /** else if (tag.equals("vehicletp")) {
                             buffer.append("도착예정버스 차량유형은 :");
                             xpp.next();
                             buffer.append(xpp.getText());//
                             buffer.append("\n");
-                        }
+                        } */
 
                         break;
 
