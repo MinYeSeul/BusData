@@ -147,7 +147,7 @@ public class MainActivity extends Activity {
                     public void run() {
                         //data가 비었을 경우 도착 정보가 없음 표시
                         if(data.contentEquals("")) {
-                            text.setText("도착 정보가 없습니다.");
+                            text.setText("5분 이내에 도착하는 버스가 없습니다.");
                         } else {
                             //TextView에 문자열 data 출력
                             text.setText(data);
@@ -155,13 +155,13 @@ public class MainActivity extends Activity {
                         //http://stackoverflow.com/a/29777304 참고
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             if(data.contentEquals("")) {
-                                ttsGreater21("도착 정보가 없습니다.");
+                                ttsGreater21("5분 이내에 도착하는 버스가 없습니다.");
                             } else {
                                 ttsGreater21(data);
                             }
                         } else {
                             if (data.contentEquals("")) {
-                                ttsUnder20("도착 정보가 없습니다.");
+                                ttsUnder20("5분 이내에 도착하는 버스가 없습니다.");
                             }
                             ttsUnder20(data);
                         }
