@@ -287,7 +287,7 @@ public class MainActivity extends Activity {
                         //태그 이름 얻어오기
                         tag = xpp.getName();
                         // 첫번째 검색결과종료..줄바꿈
-                        if (tag.equals("item")) buffer.append("\n");
+                        if (tag.equals("item") && check) buffer.append("\n");
                         break;
                 }
                 eventType = xpp.next();
