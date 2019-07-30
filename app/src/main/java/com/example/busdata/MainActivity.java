@@ -145,31 +145,33 @@ public class MainActivity extends Activity {
                 getXmlData2();
                 //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기
                 data1 = getXmlData();
-                //빨리 오는 버스 순서대로 정렬하기 위해 stringArray 선언
-                String [] stringArray = data1.split(" \n");
-                //sorting해주기 위한 반복문
-                for(int j = 0; j < stringArray.length - 1; j++) {
-                    for (int i = 0; i < stringArray.length - 1 - j; i++) {
-                        //빨리 도착하는 순서로 바꿔주기
-                        if (Integer.parseInt(stringArray[i].split("분")[0]+"") > Integer.parseInt(stringArray[i + 1].split("분")[0])) {
-                            String temp;
-                            temp = stringArray[i];
-                            stringArray[i] = stringArray[i + 1];
-                            stringArray[i + 1] = temp;
+                if(!data1.contentEquals("")) {
+                    //빨리 오는 버스 순서대로 정렬하기 위해 stringArray 선언
+                    String[] stringArray = data1.split(" \n");
+                    //sorting해주기 위한 반복문
+                    for (int j = 0; j < stringArray.length - 1; j++) {
+                        for (int i = 0; i < stringArray.length - 1 - j; i++) {
+                            //빨리 도착하는 순서로 바꿔주기
+                            if (Integer.parseInt(stringArray[i].split("분")[0] + "") > Integer.parseInt(stringArray[i + 1].split("분")[0])) {
+                                String temp;
+                                temp = stringArray[i];
+                                stringArray[i] = stringArray[i + 1];
+                                stringArray[i + 1] = temp;
+                            }
                         }
                     }
-                }
 
-                data = "";
-                for(int k = 0; k < stringArray.length; k++) {
-                    data = data + stringArray[k] + " \n";
+                    data = "";
+                    for (int k = 0; k < stringArray.length; k++) {
+                        data = data + stringArray[k] + " \n";
+                    }
                 }
                 runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
                         //data가 비었을 경우 도착 정보가 없음 표시
-                        if(data.contentEquals("")) {
+                        if(data1.contentEquals("")) {
                             text.setText("5분 이내에 도착하는 버스가 없습니다.");
                         } else {
                             //TextView에 문자열 data 출력
@@ -177,16 +179,17 @@ public class MainActivity extends Activity {
                         }
                         //http://stackoverflow.com/a/29777304 참고
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            if(data.contentEquals("")) {
+                            if(data1.contentEquals("")) {
                                 ttsGreater21("5분 이내에 도착하는 버스가 없습니다.");
                             } else {
                                 ttsGreater21(data);
                             }
                         } else {
-                            if (data.contentEquals("")) {
+                            if (data1.contentEquals("")) {
                                 ttsUnder20("5분 이내에 도착하는 버스가 없습니다.");
+                            } else {
+                                ttsUnder20(data);
                             }
-                            ttsUnder20(data);
                         }
                     }
                 });
