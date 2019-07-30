@@ -23,6 +23,8 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Timer;
@@ -41,6 +43,7 @@ public class MainActivity extends Activity {
 
     //공공데이터 API에서 가져오는 데이터
     String data;
+    String data1;
 
     //버스정류장 id와 관련된 변수
     String stationName;
@@ -55,6 +58,7 @@ public class MainActivity extends Activity {
     int minute = 0;
     // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 선언
     boolean check = true;
+
 
 
 
@@ -134,13 +138,32 @@ public class MainActivity extends Activity {
     private void getArrivalData() {
 
         new Thread(new Runnable() {
+            @TargetApi(Build.VERSION_CODES.O)
             @Override
             public void run() {
                 //stationName에 가까운 버스정류장을 넣어주는 함수
                 getXmlData2();
                 //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기
-                data = getXmlData();
+                data1 = getXmlData();
+                //빨리 오는 버스 순서대로 정렬하기 위해 stringArray 선언
+                String [] stringArray = data1.split(" \n");
+                //sorting해주기 위한 반복문
+                for(int j = 0; j < stringArray.length - 1; j++) {
+                    for (int i = 0; i < stringArray.length - 1 - j; i++) {
+                        //빨리 도착하는 순서로 바꿔주기
+                        if (Integer.parseInt(stringArray[i].split("분")[0]+"") > Integer.parseInt(stringArray[i + 1].split("분")[0])) {
+                            String temp;
+                            temp = stringArray[i];
+                            stringArray[i] = stringArray[i + 1];
+                            stringArray[i + 1] = temp;
+                        }
+                    }
+                }
 
+                data = "";
+                for(int k = 0; k < stringArray.length; k++) {
+                    data = data + stringArray[k] + " \n";
+                }
                 runOnUiThread(new Runnable() {
 
                     @Override
@@ -165,10 +188,8 @@ public class MainActivity extends Activity {
                             }
                             ttsUnder20(data);
                         }
-
                     }
                 });
-
             }
         }).start();
 
@@ -287,7 +308,7 @@ public class MainActivity extends Activity {
                         //태그 이름 얻어오기
                         tag = xpp.getName();
                         // 첫번째 검색결과종료..줄바꿈
-                        if (tag.equals("item") && check) buffer.append("\n");
+                        if (tag.equals("item") && check) buffer.append(" \n");
                         break;
                 }
                 eventType = xpp.next();
