@@ -31,6 +31,7 @@
     </LinearLayout>
 
 
+    <!--
     <TextView
         android:id="@+id/internet"
         android:layout_width="match_parent"
@@ -49,7 +50,7 @@
         android:layout_height="wrap_content"
         android:textSize="13sp"
         android:textStyle="bold"
-        android:hint="gps정보 표시" />
+        android:hint="gps정보 표시" />-->
 
     <ScrollView
         android:layout_width="match_parent"

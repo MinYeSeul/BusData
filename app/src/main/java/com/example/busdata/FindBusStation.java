@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,9 @@ public class FindBusStation extends AppCompatActivity {
     TextView text02;
     TextView busStation;
 
+    Button yesbtn;
+    Button nobtn;
+
     // 정류장 키값, 이름, 번호를 저장하기 위한 배열 선언
     ArrayList<String> stationKey = new ArrayList<>();
     ArrayList<String> stationName = new ArrayList<>();
@@ -60,6 +64,8 @@ public class FindBusStation extends AppCompatActivity {
     //TTS 변수
     TextToSpeech tts;
 
+    boolean networkCheck = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +74,9 @@ public class FindBusStation extends AppCompatActivity {
         busStation = findViewById(R.id.station_name);
         text01 = findViewById(R.id.text001);
         text02 = findViewById(R.id.text002);
+
+        nobtn = findViewById(R.id.yesbtn);
+        yesbtn = findViewById(R.id.nobtn);
 
 
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -90,20 +99,47 @@ public class FindBusStation extends AppCompatActivity {
             @Override
             public void run() {
                 getStationData();
-                Log.d("디버깅2", stationKey.get(0) + "" + stationName.get(0));
+                //Log.d("디버깅2", stationKey.get(0) + "" + stationName.get(0));
 
                 runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
-                        // 첫번째로 가져온 버스정류장 이름과 번호로 자신이 있는 정류장이 맞는지 확인
-                        busStation.setText(stationName.get(0) + " " + stationKey.get(0));
-                        sKey = stationKey.get(0);
-                        sName = stationName.get(0);
-                        sCode = stationCode.get(0);
+                        if (stationName.size() == 0 || stationKey.size() == 0) {
+                            if (!networkCheck) {
+                                busStation.setText("");
+                                text01.setText("네트워크 연결이 안되어 있습니다.");
+                                text02.setText("");
 
-                        // tts로 읽어줌
-                        speakText();
+                                speakText();
+
+                                yesbtn.setEnabled(false);
+                                nobtn.setEnabled(false);
+                                yesbtn.setVisibility(View.INVISIBLE);
+                                nobtn.setVisibility(View.INVISIBLE);
+                            }
+
+                            else if (longitude == 0.0 || latitude == 0.0) {
+                                busStation.setText("");
+                                text01.setText("GPS연결이 안되어 있습니다.");
+                                text02.setText("");
+
+                                speakText();
+                                yesbtn.setEnabled(false);
+                                nobtn.setEnabled(false);
+                                yesbtn.setVisibility(View.INVISIBLE);
+                                nobtn.setVisibility(View.INVISIBLE);
+                            }
+
+                        }
+                        else {
+                            busStation.setText(stationName.get(0) + " " + stationKey.get(0));
+                            sKey = stationKey.get(0);
+                            sName = stationName.get(0);
+                            sCode = stationCode.get(0);
+
+                            speakText();
+                        }
                     }
                 });
             }
@@ -112,6 +148,7 @@ public class FindBusStation extends AppCompatActivity {
 
 
     }
+
 
     private void speakText() {
 
@@ -281,6 +318,7 @@ public class FindBusStation extends AppCompatActivity {
             Log.d("디버깅2", "타임아웃");
 
         } catch (IOException e) {
+            networkCheck = false;
             Log.d("디버깅2", "네트웍 문제");
 
         } catch (Exception e) {
@@ -293,7 +331,7 @@ public class FindBusStation extends AppCompatActivity {
 
     public void YesButtonClicked(View view) {
         // 예 버튼을 누르면 MainActivity로 넘어감
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ChooseActivity.class);
         startActivity(intent);
         finish();
     }

@@ -37,9 +37,9 @@ public class MainActivity extends Activity {
     EditText editBusStop;
     TextView text;
     Button button;
-    TextView gpsdata;
+    /**TextView gpsdata;
     TextView stationdata;
-    TextView internet;
+    TextView internet;*/
 
 
     //공공데이터 API 사용을 위한 키값
@@ -75,9 +75,9 @@ public class MainActivity extends Activity {
         //변수 레이아웃 연결
         editBusStop = (EditText) findViewById(R.id.edit);
         text = (TextView) findViewById(R.id.text);
-        gpsdata = findViewById(R.id.gps);
+        /**gpsdata = findViewById(R.id.gps);
         stationdata = findViewById(R.id.bus_station);
-        internet = findViewById(R.id.internet);
+        internet = findViewById(R.id.internet);*/
 
         button = findViewById(R.id.button);
 
@@ -115,7 +115,7 @@ public class MainActivity extends Activity {
         timer.schedule(tt, 0, 60000);
 
 
-        editBusStop.setText(FindBusStation.sName + FindBusStation.sKey);
+        editBusStop.setText(FindBusStation.sName + " " + FindBusStation.sKey);
     }
 
     /**public void getGPSData() {
@@ -193,7 +193,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
 
-                        stationdata.setText(FindBusStation.sKey + " " + FindBusStation.sName);
+                        //stationdata.setText(FindBusStation.sKey + " " + FindBusStation.sName);
 
                         /**if(longitude != 0.0 && latitude != 0.0) {
                             gpsdata.setText(longitude + "\n" + latitude + "");
@@ -201,11 +201,11 @@ public class MainActivity extends Activity {
                             gpsdata.setText("gps를 가져오지 못함");
                         }*/
 
-                        if(xpp == null) {
+                        /**if(xpp == null) {
                             internet.setText("인터넷 널값");
                         } else {
                             internet.setText("인터넷 연결 성공");
-                        }
+                        }*/
 
 
 
