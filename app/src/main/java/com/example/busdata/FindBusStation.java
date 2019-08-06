@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -27,13 +28,16 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
 
 public class FindBusStation extends AppCompatActivity {
 
     //공공데이터 API 사용을 위한 키값
     String key = "QzQ64Y0ttlhXPP7CVvMZKf6NKxitNjOameIBPVADX4f9%2FxPRnLqZkDljqmpTROuyOCabJF8ncXbxDqHGEFAtPA%3D%3D";
 
-
+    TextView text01;
+    TextView text02;
     TextView busStation;
     ArrayList<String> stationKey = new ArrayList<>();
     ArrayList<String> stationName = new ArrayList<>();
@@ -49,12 +53,30 @@ public class FindBusStation extends AppCompatActivity {
     static String sName = "";
     static String sCode = "";
 
+    //TTS 변수
+    TextToSpeech tts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_bus_station);
 
         busStation = findViewById(R.id.station_name);
+        text01 = findViewById(R.id.text001);
+        text02 = findViewById(R.id.text002);
+
+
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.KOREAN);
+                    //tts.setLanguage(Locale.ENGLISH);
+                }
+            }
+        });
+
+
 
         getGPS();
         Log.d("디버깅2", longitude+"" + latitude);
@@ -74,12 +96,25 @@ public class FindBusStation extends AppCompatActivity {
                         sKey = stationKey.get(0);
                         sName = stationName.get(0);
                         sCode = stationCode.get(0);
+
+                        speakText();
                     }
                 });
             }
         }).start();
 
 
+
+    }
+
+    private void speakText() {
+
+        //http://stackoverflow.com/a/29777304 참고
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ttsGreater21(text01.getText().toString() + busStation.getText() + text02.getText().toString());
+        } else {
+            ttsUnder20(text01.getText().toString() + busStation.getText() + text02.getText().toString());
+        }
 
     }
 
@@ -250,9 +285,9 @@ public class FindBusStation extends AppCompatActivity {
         num++;
         if(num >= stationName.size()) {
             busStation.setText("");
-
-
-            Toast.makeText(FindBusStation.this, "일치하는 버스 정류장이 없습니다." + "\n" + "어플을 종료합니다.", Toast.LENGTH_SHORT).show();
+            text01.setText("GPS가 정확하지 않습니다. 다시 시도해주세요.");
+            text02.setText("");
+            speakText();
 
         }
         else {
@@ -260,8 +295,32 @@ public class FindBusStation extends AppCompatActivity {
             sKey = stationKey.get(num);
             sName = stationName.get(num);
             sCode = stationCode.get(num);
+            speakText();
+
         }
 
 
     }
+
+
+    //API 버전 20 아래용
+    @SuppressWarnings("deprecation")
+    private void ttsUnder20(String text) {
+        //해쉬맵 만들기
+        HashMap<String, String> map = new HashMap<>();
+        //그냥 음성인식기술 해쉬맵에 넣어주는 코드
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+        //text 파라미터로 전달받은 인자를 해쉬맵이랑 연결해서 음성으로 바꿔서 말해줌
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+    }
+
+    //API버전 21 이상용
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void ttsGreater21(String text) {
+        String utteranceId = this.hashCode() + "";
+        //text 파라미터로 전달받은 인자를 음성으로 바꿔서 말해줌
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+    }
+
+
 }

@@ -8,8 +8,9 @@
     tools:context=".FindBusStation">
 
     <TextView
+        android:id="@+id/text001"
         android:layout_width="match_parent"
-        android:text="현재 위치한 버스정류장은"
+        android:text="현재 위치한 버스정류장이"
         android:textStyle="bold"
         android:textColor="#000000"
         android:textSize="35sp"
@@ -30,13 +31,14 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/text002"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="200dp"
         android:layout_marginTop="10dp"
         android:textColor="#000000"
         android:layout_marginRight="8dp"
-        android:text="입니다."
+        android:text="입니까?"
         android:textSize="35sp"
         android:textStyle="bold" />
 

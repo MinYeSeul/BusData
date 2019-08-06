@@ -193,7 +193,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
 
-                        stationdata.setText(FindBusStation.sKey + "" + FindBusStation.sName);
+                        stationdata.setText(FindBusStation.sKey + " " + FindBusStation.sName);
 
                         /**if(longitude != 0.0 && latitude != 0.0) {
                             gpsdata.setText(longitude + "\n" + latitude + "");
