@@ -81,6 +81,44 @@ public class MainActivity extends Activity {
 
         button = findViewById(R.id.button);
 
+        //getGPSData();
+
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.KOREAN);
+                }
+            }
+        });
+
+//        바로 음성이 나와야 되니까 버튼 필요 없어서 주석으로 뺐습니다.
+//        button2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+        //public void onClick(View v) {
+//
+//                switch( v.getId() ){
+//                    case R.id.button2:
+
+        getArrivalData();
+
+        // http://blog.naver.com/PostView.nhn?blogId=ssarang8649&logNo=220947884163 참고
+        TimerTask tt = new TimerTask() {
+            @Override
+            public void run() {
+                getArrivalData();
+            }
+        };
+
+        // 버스도착예정시간을 새로고침하기 위한 타이머 _ 1분 간격으로 업데이트되도록 함.
+        Timer timer = new Timer();
+        timer.schedule(tt, 0, 60000);
+
+
+        editBusStop.setText(FindBusStation.sName + FindBusStation.sKey);
+    }
+
+    /**public void getGPSData() {
 
         //gps정보 가져오기 링크 : https://bottlecok.tistory.com/54
         //Location Manager 생성
@@ -115,38 +153,8 @@ public class MainActivity extends Activity {
 
         }
 
-        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    tts.setLanguage(Locale.KOREAN);
-                }
-            }
-        });
 
-//        바로 음성이 나와야 되니까 버튼 필요 없어서 주석으로 뺐습니다.
-//        button2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-        //public void onClick(View v) {
-//
-//                switch( v.getId() ){
-//                    case R.id.button2:
-
-        getArrivalData();
-
-        // http://blog.naver.com/PostView.nhn?blogId=ssarang8649&logNo=220947884163 참고
-        TimerTask tt = new TimerTask() {
-            @Override
-            public void run() {
-                getArrivalData();
-            }
-        };
-
-        // 버스도착예정시간을 새로고침하기 위한 타이머 _ 1분 간격으로 업데이트되도록 함.
-        Timer timer = new Timer();
-        timer.schedule(tt, 0, 60000);
-
-    }
+    }*/
 
     // TextView 에 도착예정 버스를 set 해주고 읽어주는 함수
     private void getArrivalData() {
@@ -185,13 +193,13 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
 
-                        stationdata.setText(stationName + "" + stationRealName);
+                        stationdata.setText(FindBusStation.sKey + "" + FindBusStation.sName);
 
-                        if(longitude != 0.0 && latitude != 0.0) {
+                        /**if(longitude != 0.0 && latitude != 0.0) {
                             gpsdata.setText(longitude + "\n" + latitude + "");
                         } else {
                             gpsdata.setText("gps를 가져오지 못함");
-                        }
+                        }*/
 
                         if(xpp == null) {
                             internet.setText("인터넷 널값");
@@ -231,7 +239,7 @@ public class MainActivity extends Activity {
 
     //https://bottlecok.tistory.com/54 참고
     //location listener 선언부분 : gps 정보가 바뀌는 이벤트를 받아주는 listener
-    final LocationListener gpsLocationListener = new LocationListener() {
+    /** final LocationListener gpsLocationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
@@ -245,18 +253,18 @@ public class MainActivity extends Activity {
 
         public void onProviderDisabled(String provider) {
         }
-    };
+    };*/
 
 
     //https://movie13.tistory.com/1 --> 공공기관 데이터 가져오는 법 레퍼런스
-    public String getXmlData() {
+    private String getXmlData() {
         //버퍼 변수 선언, 스트링형으로 만들어져있음, 모든 정보 저장후 한번에 버퍼 출력 하는 형식
         StringBuffer buffer = new StringBuffer();
 
         //공공기관 데이터 가져오는 url형식, stationName에 nodeid를 GPS기능으로 찾아서 저장하면, 그 정보를 이용해서
         //도착정보 조회서비스의 정류소별 도착 예정 정보 목록 조회 API를 검색해서 버스 정보를 가져오기 위해, url만들기
         String queryUrl = "http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList?"//요청 URL
-                + "&cityCode=37010" + "&nodeId=" + stationName + "&ServiceKey=" + key;
+                + "&cityCode=37010" + "&nodeId=" + FindBusStation.sCode + "&ServiceKey=" + key;
         Log.d("디버깅", queryUrl);
 
         try {
@@ -304,7 +312,7 @@ public class MainActivity extends Activity {
                             minute = Integer.parseInt(xpp.getText()) / 60;
 
                             // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 세팅
-                            if (minute > 5) check = false;
+                            if (minute > 10) check = false;
                             else check = true;
                             //버퍼에 순서대로 출력하고 싶은 형식으로 저장,
                             if (check) {
