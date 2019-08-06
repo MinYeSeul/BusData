@@ -13,6 +13,7 @@ public class ChooseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_choose);
     }
 
+
     public void mincall(View view) {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
@@ -21,5 +22,8 @@ public class ChooseActivity extends AppCompatActivity {
 
     public void specificcall(View view) {
         // 리스트뷰 화면 띄우기
+        Intent intent = new Intent(getApplicationContext(), ListViewActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

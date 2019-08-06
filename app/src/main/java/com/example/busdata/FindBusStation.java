@@ -108,7 +108,7 @@ public class FindBusStation extends AppCompatActivity {
                         if (stationName.size() == 0 || stationKey.size() == 0) {
                             if (!networkCheck) {
                                 busStation.setText("");
-                                text01.setText("네트워크 연결이 안되어 있습니다.");
+                                text01.setText("네트워크 연결이 되어있지 않습니다.");
                                 text02.setText("");
 
                                 speakText();
@@ -121,7 +121,7 @@ public class FindBusStation extends AppCompatActivity {
 
                             else if (longitude == 0.0 || latitude == 0.0) {
                                 busStation.setText("");
-                                text01.setText("GPS연결이 안되어 있습니다.");
+                                text01.setText("GPS 연결이 되어있지 않습니다.");
                                 text02.setText("");
 
                                 speakText();
@@ -130,7 +130,6 @@ public class FindBusStation extends AppCompatActivity {
                                 yesbtn.setVisibility(View.INVISIBLE);
                                 nobtn.setVisibility(View.INVISIBLE);
                             }
-
                         }
                         else {
                             busStation.setText(stationName.get(0) + " " + stationKey.get(0));
@@ -145,10 +144,7 @@ public class FindBusStation extends AppCompatActivity {
             }
         }).start();
 
-
-
     }
-
 
     private void speakText() {
 
