@@ -28,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -39,6 +40,8 @@ public class FindBusStation extends AppCompatActivity {
     TextView text01;
     TextView text02;
     TextView busStation;
+
+    // 정류장 키값, 이름, 번호를 저장하기 위한 배열 선언
     ArrayList<String> stationKey = new ArrayList<>();
     ArrayList<String> stationName = new ArrayList<>();
     ArrayList<String> stationCode = new ArrayList<>();
@@ -49,6 +52,7 @@ public class FindBusStation extends AppCompatActivity {
 
     int num = 0;
 
+    // 찾아낸 인근 정류장의 키값, 이름, 번호를 따로 저장하기 위한 문자열 선언
     static String sKey = "";
     static String sName = "";
     static String sCode = "";
@@ -77,7 +81,7 @@ public class FindBusStation extends AppCompatActivity {
         });
 
 
-
+        // gps 가져오기
         getGPS();
         Log.d("디버깅2", longitude+"" + latitude);
 
@@ -92,11 +96,13 @@ public class FindBusStation extends AppCompatActivity {
 
                     @Override
                     public void run() {
+                        // 첫번째로 가져온 버스정류장 이름과 번호로 자신이 있는 정류장이 맞는지 확인
                         busStation.setText(stationName.get(0) + " " + stationKey.get(0));
                         sKey = stationKey.get(0);
                         sName = stationName.get(0);
                         sCode = stationCode.get(0);
 
+                        // tts로 읽어줌
                         speakText();
                     }
                 });
@@ -109,11 +115,24 @@ public class FindBusStation extends AppCompatActivity {
 
     private void speakText() {
 
+        // 영어를 합쳐서 읽지 않기 위해 한글자씩 끊어 읽도록 함 (ex : YMCA를 Y M C A 로 바꿔줌)
+        for(int i = 0; i < sName.length(); i++) {
+            int index = sName.charAt(i);
+
+            if (index >= 65 && index <= 122) {
+                sName = sName.replace(sName.charAt(i)+"", sName.charAt(i) + " ");
+            }
+        }
+
+        // 버스 번호를 합쳐서 읽지 않기 위해 한글자씩 끊어 읽도록 함 (ex : 38613을 3, 8, 6, 1, 3 으로 나눠줌)
+        String[] sKeySplit = sKey.split("", sKey.length() + 1);
+
+
         //http://stackoverflow.com/a/29777304 참고
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ttsGreater21(text01.getText().toString() + busStation.getText() + text02.getText().toString());
+            ttsGreater21(text01.getText().toString() + sName + Arrays.toString(sKeySplit) + text02.getText().toString());
         } else {
-            ttsUnder20(text01.getText().toString() + busStation.getText() + text02.getText().toString());
+            ttsUnder20(text01.getText().toString() + sName + Arrays.toString(sKeySplit) + text02.getText().toString());
         }
 
     }
@@ -177,7 +196,6 @@ public class FindBusStation extends AppCompatActivity {
         StringBuffer buffer = new StringBuffer();
         String queryUrl = "http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getCrdntPrxmtSttnList?"
                 + "serviceKey=" + key + "&gpsLati=" + latitude + "&gpsLong=" + longitude;
-        Log.d("디버깅2",queryUrl);
 
         try {
 
@@ -189,9 +207,6 @@ public class FindBusStation extends AppCompatActivity {
 
 
             xpp.setInput(new InputStreamReader(is2, "UTF-8"));
-
-
-
 
             String tag;
 
@@ -219,6 +234,7 @@ public class FindBusStation extends AppCompatActivity {
                             buffer.append(xpp.getText());
                             //줄바꿈 문자 추가
                             buffer.append("\n");
+                            // 버스정류장 키값 추가
                             stationCode.add(xpp.getText());
                             Log.d("버스정류장 이름", stationCode+"");
                         }
@@ -230,6 +246,7 @@ public class FindBusStation extends AppCompatActivity {
                             buffer.append(xpp.getText());
                             //줄바꿈 문자 추가
                             buffer.append("\n");
+                            // 버스정류장 이름 추가
                             stationName.add(xpp.getText());
                             Log.d("버스정류장 이름", stationName+"");
                         }
@@ -241,8 +258,9 @@ public class FindBusStation extends AppCompatActivity {
                             buffer.append(xpp.getText());
                             //줄바꿈 문자 추가
                             buffer.append("\n");
+                            // 버스정류장 번호 추가
                             stationKey.add(xpp.getText());
-                            Log.d("버스코드", stationKey+"");
+                            Log.d("버스번호", stationKey+"");
                         }
                         break;
                     case XmlPullParser.TEXT:
@@ -274,34 +292,36 @@ public class FindBusStation extends AppCompatActivity {
     }
 
     public void YesButtonClicked(View view) {
-
+        // 예 버튼을 누르면 MainActivity로 넘어감
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
     }
 
     public void NoButtonClicked(View view) {
-
+        // 아니오 버튼을 누르면 다음 정류장 추천
         num++;
+        // 배열의 마지막까지 추천을 다 하면 gps가 정확하지 않다는 멘트 띄움
         if(num >= stationName.size()) {
             busStation.setText("");
             text01.setText("GPS가 정확하지 않습니다. 다시 시도해주세요.");
             text02.setText("");
+            // 읽어주기
             speakText();
 
         }
         else {
+            // 배열의 마지막이 되기 전에는 다음 정류장 추천 _ 버스정류장 이름 코드 바꿔서 setText
             busStation.setText(stationName.get(num) + " " + stationKey.get(num));
             sKey = stationKey.get(num);
             sName = stationName.get(num);
             sCode = stationCode.get(num);
+            // 읽어주기
             speakText();
 
         }
 
-
     }
-
 
     //API 버전 20 아래용
     @SuppressWarnings("deprecation")
