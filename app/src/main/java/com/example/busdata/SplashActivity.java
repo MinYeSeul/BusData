@@ -1,6 +1,5 @@
 package com.example.busdata;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 
