@@ -362,11 +362,10 @@ public class FindBusStation extends AppCompatActivity {
     public void YesButtonClicked(View view) {
         // 예 버튼을 누르면 MainActivity로 넘어감
         //Intent intent = new Intent(getApplicationContext(), ChooseActivity.class);
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), ChooseActivity.class);
         // 화면전환 전에 tts 말하는 것 멈추도록 함
         tts.stop();
         startActivity(intent);
-        finish();
     }
 
     public void NoButtonClicked(View view) {

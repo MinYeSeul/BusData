@@ -36,9 +36,17 @@ public class ListViewActivity extends AppCompatActivity {
     ArrayList<String> busmin = new ArrayList<>();
 
 
+    ArrayList<String> busNumArray = new ArrayList<>();
+    ArrayList<String> busMinArray = new ArrayList<>();
+
+
+
     int minute = 0;
-    // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 선언
+    int index = -1;
+    // 60분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 선언
     boolean check = true;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,11 +104,10 @@ public class ListViewActivity extends AppCompatActivity {
 
                                 // 8. 클릭한 아이템의 문자열을 가져와서
                                 String selected_item = (String) adapterView.getItemAtPosition(position);
-                                Log.d("디버깅y", "0나감");
+
                                 //만약에 Busnum의 number와 selected_item이랑 같으면 Intent생성
                                 for (int i = 0; i < busnum.size(); i++) {
                                     if (selected_item.equals(busnum.get(i) + " 번 버스")) {
-                                        Log.d("디버깅y", "0들어옴");
                                         Intent intent = new Intent(getApplicationContext(), SpecificActivity.class);
                                         intent.putExtra("busnum", busnum.get(i));
                                         intent.putExtra("busdata", busmin.get(i));
@@ -131,7 +138,7 @@ public class ListViewActivity extends AppCompatActivity {
         //도착정보 조회서비스의 정류소별 도착 예정 정보 목록 조회 API를 검색해서 버스 정보를 가져오기 위해, url만들기
         String queryUrl = "http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList?"//요청 URL
                 + "&cityCode=37010" + "&nodeId=" + FindBusStation.sCode + "&ServiceKey=" + key;
-        Log.d("디버깅11", queryUrl);
+
 
         try {
             //문자열로 된 요청 url을 URL 객체로 생성.
@@ -139,7 +146,6 @@ public class ListViewActivity extends AppCompatActivity {
 
             //url위치로 입력스트림 연결
             InputStream is = url.openStream();
-            Log.d("디버깅11", "들어옴" + queryUrl);
 
             //XML형식의 API를 파싱하는 라이브러리
             //XML형식은 순차적으로 발생하기때문에 뒤로 못돌아가서 필요하면 변수에 미리 저장해둬야함.
@@ -182,6 +188,7 @@ public class ListViewActivity extends AppCompatActivity {
                             if (minute > 60) check = false;
                             else check = true;
                             //버퍼에 순서대로 출력하고 싶은 형식으로 저장,
+                            index++;
                             if (check) {
                                 buffer.append(minute + "" + "분 뒤에");
                                 busmin.add(minute + "" + "분 뒤에");
@@ -193,13 +200,18 @@ public class ListViewActivity extends AppCompatActivity {
                          xpp.next();
                          buffer.append(xpp.getText() + "정류소에");
                          buffer.append("\n");
-                         //... 아런식으로 반복해서 API에서 필요한 정보 변수에 저장
+                         //... 이런식으로 반복해서 API에서 필요한 정보 변수에 저장
                          } */else if (tag.equals("routeno")) {
                             if (check) {
                                 //buffer.append("버스번호 :");
                                 xpp.next();
                                 buffer.append(xpp.getText() + "번 버스가 도착합니다");
-                                busnum.add(xpp.getText());
+                                if (!busNumArray.contains(xpp.getText())) {
+                                    busNumArray.add(xpp.getText());
+                                    busnum.add(xpp.getText());
+                                } else {
+                                    busMinArray.add(busmin.get(busmin.size()-1));
+                                }
                                 buffer.append("\n");
                             }
                         } /** else if (tag.equals("vehicletp")) {
@@ -229,6 +241,7 @@ public class ListViewActivity extends AppCompatActivity {
             // Auto-generated catch blocke.printStackTrace();
         }
         //buffer.append("파싱 끝\n");
+
         //StringBuffer 문자열 객체 반환
         return buffer.toString();
     }
