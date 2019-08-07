@@ -1,7 +1,7 @@
 package com.example.busdata;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,8 +25,15 @@ public class ListViewActivity extends AppCompatActivity {
     //공공데이터 API 사용을 위한 키값
     String key = "QzQ64Y0ttlhXPP7CVvMZKf6NKxitNjOameIBPVADX4f9%2FxPRnLqZkDljqmpTROuyOCabJF8ncXbxDqHGEFAtPA%3D%3D";
 
+    // 파싱 변수
     XmlPullParser xpp;
+
+    // 5분 안에 오는 버스의 번호를 api에서 가져와서 배열에 담음
     ArrayList<String> busnum = new ArrayList<>();
+
+    // 몇 분 뒤에 버스가 오는지 api에서 가져와서 순서대로 배열에 담음
+    ArrayList<String> busmin = new ArrayList<>();
+
 
     int minute = 0;
     // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 선언
@@ -60,7 +67,6 @@ public class ListViewActivity extends AppCompatActivity {
                             list.add(busnum.get(i) + " 번 버스");
                         }
 
-
                         // 5. ArrayList 객체와 ListView 객체를 연결하기 위해 ArrayAdapter객체를 사용합니다.
                         // 우선 ArrayList 객체를 ArrayAdapter 객체에 연결합니다.
                         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -70,10 +76,8 @@ public class ListViewActivity extends AppCompatActivity {
                                 list  // 데이터가 저장되어 있는 ArrayList 객체
                         );
 
-
                         // 6. ListView 객체에 adapter 객체를 연결합니다.
                         listview.setAdapter(adapter);
-
 
                         // 7. ListView 객체의 특정 아이템 클릭시 처리를 추가합니다.
                         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -84,6 +88,18 @@ public class ListViewActivity extends AppCompatActivity {
 
                                 // 8. 클릭한 아이템의 문자열을 가져와서
                                 String selected_item = (String) adapterView.getItemAtPosition(position);
+                                Log.d("디버깅y", "0나감");
+                                //만약에 Busnum의 number와 selected_item이랑 같으면 Intent생성
+                                for (int i = 0; i < busnum.size(); i++) {
+                                    if (selected_item.equals(busnum.get(i) + " 번 버스")) {
+                                        Log.d("디버깅y", "0들어옴");
+                                        Intent intent = new Intent(getApplicationContext(), SpecificActivity.class);
+                                        intent.putExtra("busnum", busnum.get(i));
+                                        intent.putExtra("busdata", busmin.get(i));
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
 
                                 // 9. 해당 아이템을 ArrayList 객체에서 제거하고
                                 list.remove(selected_item);
@@ -96,7 +112,6 @@ public class ListViewActivity extends AppCompatActivity {
                 });
             }
         }).start();
-
 
     }
 
@@ -157,11 +172,12 @@ public class ListViewActivity extends AppCompatActivity {
                             minute = Integer.parseInt(xpp.getText()) / 60;
 
                             // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 세팅
-                            if (minute > 10) check = false;
+                            if (minute > 60) check = false;
                             else check = true;
                             //버퍼에 순서대로 출력하고 싶은 형식으로 저장,
                             if (check) {
                                 buffer.append(minute + "" + "분 뒤에");
+                                busmin.add(minute + "" + "분 뒤에");
                                 buffer.append("\n");
                             }
                             //다시 반복문 올라갔다가, item 태그의 이름별로 찾음.

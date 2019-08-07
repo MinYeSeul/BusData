@@ -11,7 +11,7 @@ public class SplashActivity extends MainActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 1초동안 유지되는 첫 로고 화면
+        // 0.7초동안 유지되는 첫 로고 화면
         try {
             Thread.sleep(700);
         } catch (InterruptedException e) {

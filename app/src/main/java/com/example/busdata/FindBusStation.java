@@ -17,8 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -38,10 +36,9 @@ public class FindBusStation extends AppCompatActivity {
     //공공데이터 API 사용을 위한 키값
     String key = "QzQ64Y0ttlhXPP7CVvMZKf6NKxitNjOameIBPVADX4f9%2FxPRnLqZkDljqmpTROuyOCabJF8ncXbxDqHGEFAtPA%3D%3D";
 
-    TextView text01;
-    TextView text02;
     TextView busStation;
 
+    // 예, 아니오 버튼
     Button yesbtn;
     Button nobtn;
 
@@ -54,16 +51,21 @@ public class FindBusStation extends AppCompatActivity {
     double longitude = 0.0;
     double latitude = 0.0;
 
+    // 배열에서 숫자 1씩 늘리면서 버스 정류장 추천을 해주기 위한 int 형 변수 선언
     int num = 0;
 
-    // 찾아낸 인근 정류장의 키값, 이름, 번호를 따로 저장하기 위한 문자열 선언
+    // 찾아낸 현재 정류장의 번호, 이름, 번호를 따로 저장하기 위한 문자열 선언
+    // 찾아낸 현재 정류장의 번호
     static String sKey = "";
+    // 찾아낸 현재 정류장의 이름
     static String sName = "";
+    // 찾아낸 현재 정류장의 키값
     static String sCode = "";
 
     //TTS 변수
     TextToSpeech tts;
 
+    // 네트워크 연결 여부 체크하는 boolean형 함수
     boolean networkCheck = true;
 
     @Override
@@ -72,12 +74,9 @@ public class FindBusStation extends AppCompatActivity {
         setContentView(R.layout.activity_find_bus_station);
 
         busStation = findViewById(R.id.station_name);
-        text01 = findViewById(R.id.text001);
-        text02 = findViewById(R.id.text002);
 
         nobtn = findViewById(R.id.yesbtn);
         yesbtn = findViewById(R.id.nobtn);
-
 
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -89,6 +88,8 @@ public class FindBusStation extends AppCompatActivity {
             }
         });
 
+
+        tts.stop();
 
         // gps 가져오기
         getGPS();
@@ -107,12 +108,12 @@ public class FindBusStation extends AppCompatActivity {
                     public void run() {
                         if (stationName.size() == 0 || stationKey.size() == 0) {
                             if (!networkCheck) {
-                                busStation.setText("");
-                                text01.setText("네트워크 연결이 되어있지 않습니다.");
-                                text02.setText("");
+                                busStation.setText("네트워크 연결이 되어있지 않습니다.");
 
-                                speakText();
+                                // tts는 네트워크가 없을 때 작동하지 않음
+                                //speakText();
 
+                                // 네트워크 연결 되어있지 않으면 버튼이 필요가 없으므로 안 보이게 숨김
                                 yesbtn.setEnabled(false);
                                 nobtn.setEnabled(false);
                                 yesbtn.setVisibility(View.INVISIBLE);
@@ -120,11 +121,11 @@ public class FindBusStation extends AppCompatActivity {
                             }
 
                             else if (longitude == 0.0 || latitude == 0.0) {
-                                busStation.setText("");
-                                text01.setText("GPS 연결이 되어있지 않습니다.");
-                                text02.setText("");
+                                busStation.setText("GPS 연결이 되어있지 않습니다.");
 
                                 speakText();
+
+                                // gps가 연결 되어있지 않으면 버튼이 필요가 없으므로 안 보이게 숨김
                                 yesbtn.setEnabled(false);
                                 nobtn.setEnabled(false);
                                 yesbtn.setVisibility(View.INVISIBLE);
@@ -132,7 +133,7 @@ public class FindBusStation extends AppCompatActivity {
                             }
                         }
                         else {
-                            busStation.setText(stationName.get(0) + " " + stationKey.get(0));
+                            busStation.setText("현재 위치한 버스정류장이\n" +stationName.get(0) + " " + stationKey.get(0) + "\n입니까?");
                             sKey = stationKey.get(0);
                             sName = stationName.get(0);
                             sCode = stationCode.get(0);
@@ -160,12 +161,11 @@ public class FindBusStation extends AppCompatActivity {
         // 버스 번호를 합쳐서 읽지 않기 위해 한글자씩 끊어 읽도록 함 (ex : 38613을 3, 8, 6, 1, 3 으로 나눠줌)
         String[] sKeySplit = sKey.split("", sKey.length() + 1);
 
-
         //http://stackoverflow.com/a/29777304 참고
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ttsGreater21(text01.getText().toString() + sName + Arrays.toString(sKeySplit) + text02.getText().toString());
+            ttsGreater21("현재 위치한 버스정류장이\n" + sName + Arrays.toString(sKeySplit) + "\n입니까?");
         } else {
-            ttsUnder20(text01.getText().toString() + sName + Arrays.toString(sKeySplit) + text02.getText().toString());
+            ttsUnder20("현재 위치한 버스정류장이\n" + sName + Arrays.toString(sKeySplit) + "\n입니까?");
         }
 
     }
@@ -328,6 +328,8 @@ public class FindBusStation extends AppCompatActivity {
     public void YesButtonClicked(View view) {
         // 예 버튼을 누르면 MainActivity로 넘어감
         Intent intent = new Intent(getApplicationContext(), ChooseActivity.class);
+        // 화면전환 전에 tts 말하는 것 멈추도록 함
+        tts.stop();
         startActivity(intent);
         finish();
     }
@@ -337,16 +339,20 @@ public class FindBusStation extends AppCompatActivity {
         num++;
         // 배열의 마지막까지 추천을 다 하면 gps가 정확하지 않다는 멘트 띄움
         if(num >= stationName.size()) {
-            busStation.setText("");
-            text01.setText("GPS가 정확하지 않습니다. 다시 시도해주세요.");
-            text02.setText("");
+
+            yesbtn.setEnabled(false);
+            nobtn.setEnabled(false);
+            yesbtn.setVisibility(View.INVISIBLE);
+            nobtn.setVisibility(View.INVISIBLE);
+
+            busStation.setText("GPS가 정확하지 않습니다. 다시 시도해주세요.");
             // 읽어주기
             speakText();
 
         }
         else {
             // 배열의 마지막이 되기 전에는 다음 정류장 추천 _ 버스정류장 이름 코드 바꿔서 setText
-            busStation.setText(stationName.get(num) + " " + stationKey.get(num));
+            busStation.setText("현재 위치한 버스정류장이\n" + stationName.get(num) + " " + stationKey.get(num) + "\n입니까?");
             sKey = stationKey.get(num);
             sName = stationName.get(num);
             sCode = stationCode.get(num);

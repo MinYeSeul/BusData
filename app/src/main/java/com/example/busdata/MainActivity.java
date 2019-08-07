@@ -2,16 +2,9 @@ package com.example.busdata;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +16,6 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Timer;
@@ -81,7 +72,6 @@ public class MainActivity extends Activity {
 
         button = findViewById(R.id.button);
 
-        //getGPSData();
 
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -100,6 +90,8 @@ public class MainActivity extends Activity {
 //                switch( v.getId() ){
 //                    case R.id.button2:
 
+        tts.stop();
+
         getArrivalData();
 
         // http://blog.naver.com/PostView.nhn?blogId=ssarang8649&logNo=220947884163 참고
@@ -114,47 +106,10 @@ public class MainActivity extends Activity {
         Timer timer = new Timer();
         timer.schedule(tt, 0, 60000);
 
-
+        //editText창에 찾아낸 현재 버스정류장 이름 + 번호 띄워줌. --> 디버깅용
         editBusStop.setText(FindBusStation.sName + " " + FindBusStation.sKey);
     }
 
-    /**public void getGPSData() {
-
-        //gps정보 가져오기 링크 : https://bottlecok.tistory.com/54
-        //Location Manager 생성
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        //API버전확인
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    0);
-        }
-
-        //위도, 경도 value 가져오기
-        else {
-            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            // location 변수에 최근 gps정보 할당
-            if(location != null) {
-                longitude = location.getLongitude();
-                latitude = location.getLatitude();
-            } else {
-                latitude = 0.0;
-                longitude = 0.0;
-            }
-            //특정 시간이 지나거나 gps정보가 특정거리 이상 변경 되었을 때 gps 정보 업데이트
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    //시간 설정 (단위 ms)
-                    1000,
-                    //거리 설정  (단위 m)
-                    1,
-                    //gpslistner 연결
-                    gpsLocationListener);
-
-        }
-
-
-    }*/
 
     // TextView 에 도착예정 버스를 set 해주고 읽어주는 함수
     private void getArrivalData() {
@@ -163,8 +118,6 @@ public class MainActivity extends Activity {
             @TargetApi(Build.VERSION_CODES.O)
             @Override
             public void run() {
-                //stationName에 가까운 버스정류장을 넣어주는 함수
-                getXmlData2();
                 //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기
                 data1 = getXmlData();
                 if(!data1.contentEquals("")) {
@@ -236,25 +189,6 @@ public class MainActivity extends Activity {
         }).start();
 
     }
-
-    //https://bottlecok.tistory.com/54 참고
-    //location listener 선언부분 : gps 정보가 바뀌는 이벤트를 받아주는 listener
-    /** final LocationListener gpsLocationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
-        }
-        //사용하지 않는 메서드들
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        public void onProviderEnabled(String provider) {
-        }
-
-        public void onProviderDisabled(String provider) {
-        }
-    };*/
-
 
     //https://movie13.tistory.com/1 --> 공공기관 데이터 가져오는 법 레퍼런스
     private String getXmlData() {
@@ -363,109 +297,6 @@ public class MainActivity extends Activity {
         //StringBuffer 문자열 객체 반환
         return buffer.toString();
     }
-
-
-    //https://movie13.tistory.com/1 참고
-    private void getXmlData2() {
-
-        //가장 가까운 버스정류장을 가져오기 위한 count 변수 선언
-        int count = 0;
-
-        StringBuffer buffer = new StringBuffer();
-        String queryUrl = "http://openapi.tago.go.kr/openapi/service/BusSttnInfoInqireService/getCrdntPrxmtSttnList?"
-                + "serviceKey=" + key + "&gpsLati=" + latitude + "&gpsLong=" + longitude;
-        Log.d("디버깅",queryUrl);
-
-
-
-        try {
-            Log.d("디버깅","들어와");
-
-            stationName = "null";
-            stationRealName = "null";
-            URL url = new URL(queryUrl);
-            InputStream is = url.openStream();
-
-            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-            xpp = factory.newPullParser();
-            xpp.setInput(new InputStreamReader(is, "UTF-8"));
-            Log.d("디버깅", xpp+"");
-
-            String tag;
-
-            xpp.next();
-            int eventType = xpp.getEventType();
-            Log.d("디버깅",count+"" + eventType);
-
-            //현재값 2, 스타트다큐 0, 엔드다큐 1, 스타트태그 2; 택스트 4, 엔드태그 3
-            while (eventType != XmlPullParser.END_DOCUMENT) {
-                switch (eventType) {
-                    case XmlPullParser.START_DOCUMENT:
-                        buffer.append("파싱 시작...\n\n");
-                        Log.d("디버깅",count+"");
-
-                        break;
-
-                    case XmlPullParser.START_TAG:
-                        //태그 이름 얻어오기
-                        tag = xpp.getName();
-
-                        // 첫번째 검색결과
-                        if (tag.equals("item"));
-                        else if (tag.equals("nodeid")) {
-                            buffer.append("정류장 id");
-                            buffer.append(" : ");
-                            xpp.next();
-                            //TEXT 읽어와서 문자열버퍼에 추가
-                            buffer.append(xpp.getText());
-                            //줄바꿈 문자 추가
-                            buffer.append("\n");
-                            //첫번째 값이면 가장 가까운 버스정류장이므로 stationName 변수에 따로 값을 저장
-                            if (count == 0) {
-                                stationName = xpp.getText();
-                                Log.d("디버깅",count + stationName);
-
-                            }
-                            //가장 가까운 정류장을 알아내기 위함이였으므로 count 변수 1씩 증가시킴.
-                            //count++;
-                        }
-                        else if(tag.equals("nodenm")) {
-                            buffer.append("정류장 이름");
-                            buffer.append(":");
-                            xpp.next();
-                            //TEXT 읽어와서 문자열버퍼에 추가
-                            buffer.append(xpp.getText());
-                            //줄바꿈 문자 추가
-                            buffer.append("\n");
-                            if(count == 0) {
-                                stationRealName = xpp.getText();
-                                Log.d("디버깅",stationRealName);
-                            }
-                            //가장 가까운 정류장을 알아내기 위함이였으므로 count 변수 1씩 증가시킴.
-                            count++;
-                        }
-                        break;
-                    case XmlPullParser.TEXT:
-                        break;
-                    case XmlPullParser.END_TAG:
-                        //태그 이름 얻어오기
-                        tag = xpp.getName();
-                        //첫번째 검색결과종료..줄바꿈
-                        if (tag.equals("item")) buffer.append("\n");
-                        break;
-                }
-                eventType = xpp.next();
-            }
-        } catch (Exception e) {
-            xpp = null;
-            Log.d("디버깅","나왔어");
-
-            //Auto-generated catch blocke.printStackTrace();
-        }
-        // buffer.append("파싱 끝\n");
-    }
-
-
 
     //https://webnautes.tistory.com/847 -->음성인식 기능 레퍼런스
     //무조건 tts를 위해서 onclick할때 override 되어야 오류가 뜨지 않음. 그냥 두면 됨.
