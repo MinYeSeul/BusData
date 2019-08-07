@@ -17,6 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.busdata.R;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -32,7 +35,6 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class FindBusStation extends AppCompatActivity {
-
     //공공데이터 API 사용을 위한 키값
     String key = "QzQ64Y0ttlhXPP7CVvMZKf6NKxitNjOameIBPVADX4f9%2FxPRnLqZkDljqmpTROuyOCabJF8ncXbxDqHGEFAtPA%3D%3D";
 
@@ -41,11 +43,17 @@ public class FindBusStation extends AppCompatActivity {
     // 예, 아니오 버튼
     Button yesbtn;
     Button nobtn;
+    Button reDobtn;
 
     // 정류장 키값, 이름, 번호를 저장하기 위한 배열 선언
     ArrayList<String> stationKey = new ArrayList<>();
     ArrayList<String> stationName = new ArrayList<>();
     ArrayList<String> stationCode = new ArrayList<>();
+
+
+    ArrayList<String> remove = new ArrayList<>();
+
+
 
     //경도와 위도 변수 선언
     double longitude = 0.0;
@@ -72,11 +80,13 @@ public class FindBusStation extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_bus_station);
-
         busStation = findViewById(R.id.station_name);
 
         nobtn = findViewById(R.id.yesbtn);
         yesbtn = findViewById(R.id.nobtn);
+        reDobtn = findViewById(R.id.reDobtn);
+
+        remove.add("삭제");
 
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -90,6 +100,10 @@ public class FindBusStation extends AppCompatActivity {
 
 
         tts.stop();
+
+
+        reDobtn.setEnabled(false);
+        reDobtn.setVisibility(View.INVISIBLE);
 
         // gps 가져오기
         getGPS();
@@ -118,6 +132,9 @@ public class FindBusStation extends AppCompatActivity {
                                 nobtn.setEnabled(false);
                                 yesbtn.setVisibility(View.INVISIBLE);
                                 nobtn.setVisibility(View.INVISIBLE);
+
+                                reDobtn.setEnabled(true);
+                                reDobtn.setVisibility(View.VISIBLE);
                             }
 
                             else if (longitude == 0.0 || latitude == 0.0) {
@@ -130,9 +147,14 @@ public class FindBusStation extends AppCompatActivity {
                                 nobtn.setEnabled(false);
                                 yesbtn.setVisibility(View.INVISIBLE);
                                 nobtn.setVisibility(View.INVISIBLE);
+
+                                reDobtn.setEnabled(true);
+                                reDobtn.setVisibility(View.VISIBLE);
                             }
                         }
                         else {
+                            stationName.removeAll(remove);
+
                             busStation.setText("현재 위치한 버스정류장이\n" +stationName.get(0) + " " + stationKey.get(0) + "\n입니까?");
                             sKey = stationKey.get(0);
                             sName = stationName.get(0);
@@ -163,9 +185,21 @@ public class FindBusStation extends AppCompatActivity {
 
         //http://stackoverflow.com/a/29777304 참고
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ttsGreater21("현재 위치한 버스정류장이\n" + sName + Arrays.toString(sKeySplit) + "\n입니까?");
+            //GPS 정보를 못가져오는 경우의 TTS
+            if (longitude == 0.0 || latitude == 0.0)
+            {
+                ttsGreater21("GPS 연결이 되어있지 않습니다.");
+            }
+            //인터넷과 GPS 정보를 가져와 똑바로 작동했을 경우 TTS
+            else ttsGreater21("현재 위치한 버스정류장이\n" + sName + Arrays.toString(sKeySplit) + "\n입니까?");
         } else {
-            ttsUnder20("현재 위치한 버스정류장이\n" + sName + Arrays.toString(sKeySplit) + "\n입니까?");
+            //GPS 정보를 못가져오는 경우의 TTS 메시지
+            if (longitude == 0.0 || latitude == 0.0)
+            {
+                ttsGreater21("GPS 연결이 되어있지 않습니다.");
+            }
+            //인터넷과 GPS 정보를 가져와 똑바로 작동했을 경우 TTS
+            else ttsUnder20("현재 위치한 버스정류장이\n" + sName + Arrays.toString(sKeySplit) + "\n입니까?");
         }
 
     }
@@ -327,7 +361,8 @@ public class FindBusStation extends AppCompatActivity {
 
     public void YesButtonClicked(View view) {
         // 예 버튼을 누르면 MainActivity로 넘어감
-        Intent intent = new Intent(getApplicationContext(), ChooseActivity.class);
+        //Intent intent = new Intent(getApplicationContext(), ChooseActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         // 화면전환 전에 tts 말하는 것 멈추도록 함
         tts.stop();
         startActivity(intent);
@@ -349,8 +384,12 @@ public class FindBusStation extends AppCompatActivity {
             // 읽어주기
             speakText();
 
+            reDobtn.setEnabled(true);
+            reDobtn.setVisibility(View.VISIBLE);
+
         }
         else {
+            stationName.removeAll(remove);
             // 배열의 마지막이 되기 전에는 다음 정류장 추천 _ 버스정류장 이름 코드 바꿔서 setText
             busStation.setText("현재 위치한 버스정류장이\n" + stationName.get(num) + " " + stationKey.get(num) + "\n입니까?");
             sKey = stationKey.get(num);
@@ -383,4 +422,78 @@ public class FindBusStation extends AppCompatActivity {
     }
 
 
+    public void redo(View view) {
+
+        //다시 예/아니요 버튼 보이게 하기, 다시보이기 버튼 숨기기
+        yesbtn.setEnabled(true);
+        nobtn.setEnabled(true);
+        yesbtn.setVisibility(View.VISIBLE);
+        nobtn.setVisibility(View.VISIBLE);
+        reDobtn.setEnabled(false);
+        reDobtn.setVisibility(View.INVISIBLE);
+
+        tts.stop();
+
+        // gps 가져오기
+        getGPS();
+        Log.d("디버깅2", longitude+"" + latitude);
+
+        new Thread(new Runnable() {
+            @TargetApi(Build.VERSION_CODES.O)
+            @Override
+            public void run() {
+                getStationData();
+                //Log.d("디버깅2", stationKey.get(0) + "" + stationName.get(0));
+
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (stationName.size() == 0 || stationKey.size() == 0) {
+                            if (!networkCheck) {
+                                busStation.setText("네트워크 연결이 되어있지 않습니다.");
+
+                                // tts는 네트워크가 없을 때 작동하지 않음
+                                //speakText();
+
+                                // 네트워크 연결 되어있지 않으면 버튼이 필요가 없으므로 안 보이게 숨김
+                                yesbtn.setEnabled(false);
+                                nobtn.setEnabled(false);
+                                yesbtn.setVisibility(View.INVISIBLE);
+                                nobtn.setVisibility(View.INVISIBLE);
+
+                                reDobtn.setEnabled(true);
+                                reDobtn.setVisibility(View.VISIBLE);
+                            }
+
+                            else if (longitude == 0.0 || latitude == 0.0) {
+                                busStation.setText("GPS 연결이 되어있지 않습니다.");
+
+                                speakText();
+
+                                // gps가 연결 되어있지 않으면 버튼이 필요가 없으므로 안 보이게 숨김
+                                yesbtn.setEnabled(false);
+                                nobtn.setEnabled(false);
+                                yesbtn.setVisibility(View.INVISIBLE);
+                                nobtn.setVisibility(View.INVISIBLE);
+
+                                reDobtn.setEnabled(true);
+                                reDobtn.setVisibility(View.VISIBLE);
+                            }
+                        }
+                        else {
+                            stationName.removeAll(remove);
+                            busStation.setText("현재 위치한 버스정류장이\n" +stationName.get(0) + " " + stationKey.get(0) + "\n입니까?");
+                            sKey = stationKey.get(0);
+                            sName = stationName.get(0);
+                            sCode = stationCode.get(0);
+
+                            speakText();
+                        }
+                    }
+                });
+            }
+        }).start();
+
+    }
 }

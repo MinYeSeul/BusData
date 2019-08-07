@@ -30,17 +30,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChooseActivity">
+        <activity android:name=".ChooseActivity"
+            android:parentActivityName=".FindBusStation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ListViewActivity">
+        <activity android:name=".ListViewActivity"
+            android:parentActivityName=".ChooseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
             </intent-filter>
         </activity>
-        <activity android:name=".SpecificActivity"></activity>
+        <activity android:name=".SpecificActivity" android:parentActivityName=".ListViewActivity"></activity>
 
     </application>
 

@@ -37,7 +37,5 @@ public class SpecificActivity extends AppCompatActivity {
         actionBar.setTitle("뒤로가기");  //액션바 제목설정
         actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
-        //업버튼이 되려면 눌렀을 때 돌아갈 Activity를 지정해줘야 함
-
     }
 }

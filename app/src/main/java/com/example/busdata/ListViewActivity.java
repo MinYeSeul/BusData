@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -43,6 +44,13 @@ public class ListViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
+
+
+        //https://ande226.tistory.com/141
+        //ActionBar로 뒤로가기 버튼 추가
+        ActionBar actionBar = getSupportActionBar();  //제목줄 객체 얻어오기
+        actionBar.setTitle("뒤로가기");  //액션바 제목설정
+        actionBar.setDisplayHomeAsUpEnabled(true);   //업버튼 <- 만들기
 
 
         new Thread(new Runnable() {
@@ -97,7 +105,6 @@ public class ListViewActivity extends AppCompatActivity {
                                         intent.putExtra("busnum", busnum.get(i));
                                         intent.putExtra("busdata", busmin.get(i));
                                         startActivity(intent);
-                                        finish();
                                     }
                                 }
 
