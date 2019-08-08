@@ -80,6 +80,7 @@ public class ListViewActivity extends AppCompatActivity {
                                 list.add(busnum.get(i) + " 번 버스");
                             }
                         }
+                        list.add("항목 중에 없는 버스는 도착정보가 없습니다.");
                         Log.d("버스정보", busnum.toString());
                         Log.d("버스정보", busmin.toString());
 
@@ -110,8 +111,12 @@ public class ListViewActivity extends AppCompatActivity {
                                 busWhen[0] = "";
 
                                 for (int i = 0; i < list.size(); i++) {
+
+                                    if (selected_item.equals("항목 중에 없는 버스는 도착정보가 없습니다.")) {
+                                        
+                                    }
                                     // 선택된 아이템이 list의 아이템과 같다면
-                                    if (selected_item.equals(list.get(i))) {
+                                    else if (selected_item.equals(list.get(i))) {
                                         Log.d("온클릭", list.get(i));
 
                                         // 버스 번호만 따로 저장하기 위해 split 후 0번째만 저장
@@ -129,11 +134,13 @@ public class ListViewActivity extends AppCompatActivity {
                                                 Log.d("온클릭", busWhen[0]);
                                             }
                                         }
+
+                                        Intent intent = new Intent(getApplicationContext(), SpecificActivity.class);
+                                        startActivity(intent);
                                     }
                                 }
 
-                                Intent intent = new Intent(getApplicationContext(), SpecificActivity.class);
-                                startActivity(intent);
+
                             }
                         });
                     }
