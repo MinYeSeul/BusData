@@ -35,18 +35,9 @@ public class ListViewActivity extends AppCompatActivity {
     // 몇 분 뒤에 버스가 오는지 api에서 가져와서 순서대로 배열에 담음
     ArrayList<String> busmin = new ArrayList<>();
 
-
-    ArrayList<String> busNumArray = new ArrayList<>();
-    ArrayList<String> busMinArray = new ArrayList<>();
-
-
-
     int minute = 0;
-    int index = -1;
     // 60분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 선언
     boolean check = true;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,7 +179,6 @@ public class ListViewActivity extends AppCompatActivity {
                             if (minute > 60) check = false;
                             else check = true;
                             //버퍼에 순서대로 출력하고 싶은 형식으로 저장,
-                            index++;
                             if (check) {
                                 buffer.append(minute + "" + "분 뒤에");
                                 busmin.add(minute + "" + "분 뒤에");
@@ -206,12 +196,7 @@ public class ListViewActivity extends AppCompatActivity {
                                 //buffer.append("버스번호 :");
                                 xpp.next();
                                 buffer.append(xpp.getText() + "번 버스가 도착합니다");
-                                if (!busNumArray.contains(xpp.getText())) {
-                                    busNumArray.add(xpp.getText());
-                                    busnum.add(xpp.getText());
-                                } else {
-                                    busMinArray.add(busmin.get(busmin.size()-1));
-                                }
+                                busnum.add(xpp.getText());
                                 buffer.append("\n");
                             }
                         } /** else if (tag.equals("vehicletp")) {

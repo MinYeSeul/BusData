@@ -50,7 +50,6 @@ public class FindBusStation extends AppCompatActivity {
     ArrayList<String> stationName = new ArrayList<>();
     ArrayList<String> stationCode = new ArrayList<>();
 
-
     ArrayList<String> remove = new ArrayList<>();
 
 
@@ -105,8 +104,12 @@ public class FindBusStation extends AppCompatActivity {
         reDobtn.setEnabled(false);
         reDobtn.setVisibility(View.INVISIBLE);
 
+
         // gps 가져오기
         getGPS();
+
+
+
         Log.d("디버깅2", longitude+"" + latitude);
 
         new Thread(new Runnable() {
@@ -367,6 +370,7 @@ public class FindBusStation extends AppCompatActivity {
         tts.stop();
         startActivity(intent);
     }
+
 
     public void NoButtonClicked(View view) {
         // 아니오 버튼을 누르면 다음 정류장 추천
