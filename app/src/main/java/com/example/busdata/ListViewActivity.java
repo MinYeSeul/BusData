@@ -35,8 +35,7 @@ public class ListViewActivity extends AppCompatActivity {
     // 몇 분 뒤에 버스가 오는지 api에서 가져와서 순서대로 배열에 담음
     static ArrayList<String> busmin = new ArrayList<>();
 
-    String[] index = new String[20];
-
+    // SpecificActivity로 넘겨주기위한 버스번호와 도착 정보
     static String busNumber;
     static String[] busWhen = new String[20];
 
@@ -76,6 +75,7 @@ public class ListViewActivity extends AppCompatActivity {
 
                         // 4. ArrayList 객체에 데이터를 집어넣습니다. 해당 정류장에 오는 버스 번호만큼 리스트에 추가해주기
                         for (int i = 0; i < busnum.size(); i++) {
+                            // 리스트 아이템 중 이미 추가되어있지 않다면 추가하기
                             if(!list.contains(busnum.get(i) + " 번 버스")) {
                                 list.add(busnum.get(i) + " 번 버스");
                             }
@@ -109,18 +109,22 @@ public class ListViewActivity extends AppCompatActivity {
 
                                 busWhen[0] = "";
 
-                                //만약에 Busnum의 number와 selected_item이랑 같으면 Intent생성
                                 for (int i = 0; i < list.size(); i++) {
+                                    // 선택된 아이템이 list의 아이템과 같다면
                                     if (selected_item.equals(list.get(i))) {
                                         Log.d("온클릭", list.get(i));
 
+                                        // 버스 번호만 따로 저장하기 위해 split 후 0번째만 저장
                                         String number = list.get(i).split(" ")[0];
-                                        busNumber = number;
 
+                                        // 저장 후 SpecificActivity로 넘겨주기
+                                        busNumber = number;
                                         Log.d("온클릭", busNumber);
 
                                         for (int j = 0; j < busnum.size(); j++) {
+                                            // 선택된 버스 번호가 버스 번호(중복도 포함되어있는)와 같다면
                                             if (number.equals(busnum.get(j))) {
+                                                // busWhen에 몇 분 뒤 도착하는지 정보를 넣어줌
                                                 busWhen[0] += " " + busmin.get(j);
                                                 Log.d("온클릭", busWhen[0]);
                                             }

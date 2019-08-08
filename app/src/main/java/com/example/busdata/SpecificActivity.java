@@ -24,22 +24,13 @@ public class SpecificActivity extends AppCompatActivity {
         // Id값 연결
         textdata = findViewById(R.id.busdata);
 
-
-        /**
-        // 버스리스트뷰에서 전달한 String 정보 받기 위한 Intent 설정
-        Intent intent = getIntent();
-
-        // 버스리스트뷰에서 전달한 버스 번호 정보 받기
-        String busnum = ((Intent) intent).getStringExtra("busnum");
-
-        // 버스리스트뷰에서 전달한 도착 시간 정보 받기
-        String busdata = ((Intent) intent).getStringExtra("busdata");
-        Log.d("버스정보", ListViewActivity.busnum.toString() + ListViewActivity.busmin.toString());
-         */
-
+        // 몇 분 뒤 도착하는지 저장해뒀던 분 두 개 split으로 나누기
         String[] data = ListViewActivity.busWhen[0].split(" ");
+
+        // int형으로 바꿔주기 위해 int형 배열 선언
         int[] dataN = new int[20];
 
+        // 공백이 아니라면 int형으로 바꿔줌
         for (int j = 0; j < data.length; j++) {
             if (!data[j].isEmpty()) {
                 dataN[j] = Integer.parseInt(data[j]);
@@ -48,15 +39,12 @@ public class SpecificActivity extends AppCompatActivity {
             Arrays.sort(dataN);
         }
 
-
+        // 0보다 크다면 textdata에 추가해주기
         for(int i = 0; i < dataN.length; i++) {
             if(dataN[i] > 0) {
                 textdata.append(ListViewActivity.busNumber + "번 버스가 " + dataN[i] + "분 뒤에 도착합니다.\n\n");
             }
         }
-
-        // 텍스트데이타에 띄워주기
-        // textdata.setText(ListViewActivity.busNumber + "번 버스가" + ListViewActivity.busWhen[0] +  "분 뒤에 도착합니다.");
 
         //https://ande226.tistory.com/141
         //ActionBar로 뒤로가기 버튼 추가
