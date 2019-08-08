@@ -30,10 +30,15 @@ public class ListViewActivity extends AppCompatActivity {
     XmlPullParser xpp;
 
     // 5분 안에 오는 버스의 번호를 api에서 가져와서 배열에 담음
-    ArrayList<String> busnum = new ArrayList<>();
+    static ArrayList<String> busnum = new ArrayList<>();
 
     // 몇 분 뒤에 버스가 오는지 api에서 가져와서 순서대로 배열에 담음
-    ArrayList<String> busmin = new ArrayList<>();
+    static ArrayList<String> busmin = new ArrayList<>();
+
+    String[] index = new String[20];
+
+    static String busNumber;
+    static String[] busWhen = new String[20];
 
     int minute = 0;
     // 60분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 선언
@@ -69,10 +74,16 @@ public class ListViewActivity extends AppCompatActivity {
                         // 3. 실제로 문자열 데이터를 저장하는데 사용할 ArrayList 객체를 생성합니다.
                         final ArrayList<String> list = new ArrayList<>();
 
-                        // 4. ArrayList 객체에 데이터를 집어넣습니다.
+                        // 4. ArrayList 객체에 데이터를 집어넣습니다. 해당 정류장에 오는 버스 번호만큼 리스트에 추가해주기
                         for (int i = 0; i < busnum.size(); i++) {
-                            list.add(busnum.get(i) + " 번 버스");
+                            if(!list.contains(busnum.get(i) + " 번 버스")) {
+                                list.add(busnum.get(i) + " 번 버스");
+                            }
                         }
+                        Log.d("버스정보", busnum.toString());
+                        Log.d("버스정보", busmin.toString());
+
+
 
                         // 5. ArrayList 객체와 ListView 객체를 연결하기 위해 ArrayAdapter객체를 사용합니다.
                         // 우선 ArrayList 객체를 ArrayAdapter 객체에 연결합니다.
@@ -96,21 +107,29 @@ public class ListViewActivity extends AppCompatActivity {
                                 // 8. 클릭한 아이템의 문자열을 가져와서
                                 String selected_item = (String) adapterView.getItemAtPosition(position);
 
+                                busWhen[0] = "";
+
                                 //만약에 Busnum의 number와 selected_item이랑 같으면 Intent생성
-                                for (int i = 0; i < busnum.size(); i++) {
-                                    if (selected_item.equals(busnum.get(i) + " 번 버스")) {
-                                        Intent intent = new Intent(getApplicationContext(), SpecificActivity.class);
-                                        intent.putExtra("busnum", busnum.get(i));
-                                        intent.putExtra("busdata", busmin.get(i));
-                                        startActivity(intent);
+                                for (int i = 0; i < list.size(); i++) {
+                                    if (selected_item.equals(list.get(i))) {
+                                        Log.d("온클릭", list.get(i));
+
+                                        String number = list.get(i).split(" ")[0];
+                                        busNumber = number;
+
+                                        Log.d("온클릭", busNumber);
+
+                                        for (int j = 0; j < busnum.size(); j++) {
+                                            if (number.equals(busnum.get(j))) {
+                                                busWhen[0] += " " + busmin.get(j);
+                                                Log.d("온클릭", busWhen[0]);
+                                            }
+                                        }
                                     }
                                 }
 
-                                // 9. 해당 아이템을 ArrayList 객체에서 제거하고
-                                list.remove(selected_item);
-
-                                // 10. 어댑터 객체에 변경 내용을 반영시켜줘야 에러가 발생하지 않습니다.
-                                adapter.notifyDataSetChanged();
+                                Intent intent = new Intent(getApplicationContext(), SpecificActivity.class);
+                                startActivity(intent);
                             }
                         });
                     }
@@ -129,6 +148,12 @@ public class ListViewActivity extends AppCompatActivity {
         //도착정보 조회서비스의 정류소별 도착 예정 정보 목록 조회 API를 검색해서 버스 정보를 가져오기 위해, url만들기
         String queryUrl = "http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList?"//요청 URL
                 + "&cityCode=37010" + "&nodeId=" + FindBusStation.sCode + "&ServiceKey=" + key;
+
+        busnum = new ArrayList<>();
+
+        // 몇 분 뒤에 버스가 오는지 api에서 가져와서 순서대로 배열에 담음
+        busmin = new ArrayList<>();
+
 
 
         try {
@@ -181,7 +206,7 @@ public class ListViewActivity extends AppCompatActivity {
                             //버퍼에 순서대로 출력하고 싶은 형식으로 저장,
                             if (check) {
                                 buffer.append(minute + "" + "분 뒤에");
-                                busmin.add(minute + "" + "분 뒤에");
+                                busmin.add(minute+"");
                                 buffer.append("\n");
                             }
                             //다시 반복문 올라갔다가, item 태그의 이름별로 찾음.
