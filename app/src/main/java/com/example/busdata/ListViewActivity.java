@@ -113,7 +113,7 @@ public class ListViewActivity extends AppCompatActivity {
                                 for (int i = 0; i < list.size(); i++) {
 
                                     if (selected_item.equals("항목 중에 없는 버스는 도착정보가 없습니다.")) {
-                                        
+
                                     }
                                     // 선택된 아이템이 list의 아이템과 같다면
                                     else if (selected_item.equals(list.get(i))) {

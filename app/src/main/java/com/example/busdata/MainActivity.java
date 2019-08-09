@@ -164,7 +164,7 @@ public class MainActivity extends Activity {
 
                         //data가 비었을 경우 도착 정보가 없음 표시
                         if(data1.contentEquals("")) {
-                            text.setText("5분 이내에 도착하는 버스가 없습니다.");
+                            text.setText("10분 이내에 도착하는 버스가 없습니다.");
                         } else {
                             //TextView에 문자열 data 출력
                             text.setText(data);

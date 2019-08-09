@@ -2,6 +2,7 @@ package com.example.busdata;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,12 +12,17 @@ import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.busdata.R;
 
@@ -50,6 +56,7 @@ public class FindBusStation extends AppCompatActivity {
     ArrayList<String> stationName = new ArrayList<>();
     ArrayList<String> stationCode = new ArrayList<>();
 
+
     ArrayList<String> remove = new ArrayList<>();
 
 
@@ -75,9 +82,71 @@ public class FindBusStation extends AppCompatActivity {
     // 네트워크 연결 여부 체크하는 boolean형 함수
     boolean networkCheck = true;
 
+
+    //res에서 menu resource file 하나 더 만들어서 거기다가 개발자 정보 만들 아이콘 집어넣기
+    @Override
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.menu, menu);
+
+        return true;
+
+    }
+
+    @Override
+
+    //개발자 정보 아이콘 클릭했을 때, 개발자 정보 띄워주기
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        //ID에다가 menu의 icon ID쓰면 됨.
+        if( id == R.id.action_settings ){
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+            // 제목셋팅
+            alertDialogBuilder.setTitle("개발자 정보");
+
+            // AlertDialog 셋팅
+            alertDialogBuilder
+                    .setMessage("개발자: 강예빈 배한재 민예슬 유고운       " +
+                            "       디자인: 정수현 ")
+                    .setCancelable(false);
+
+
+            alertDialogBuilder
+                    .setNegativeButton("닫기",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(
+                                        DialogInterface dialog, int id) {
+                                    // 다이얼로그를 끝낸다.
+                                    dialog.cancel();
+                                }
+                            });
+
+            // 다이얼로그 생성
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // 다이얼로그 보여주기
+            alertDialog.show();
+
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_find_bus_station);
         busStation = findViewById(R.id.station_name);
 
@@ -104,12 +173,8 @@ public class FindBusStation extends AppCompatActivity {
         reDobtn.setEnabled(false);
         reDobtn.setVisibility(View.INVISIBLE);
 
-
         // gps 가져오기
         getGPS();
-
-
-
         Log.d("디버깅2", longitude+"" + latitude);
 
         new Thread(new Runnable() {
@@ -170,7 +235,9 @@ public class FindBusStation extends AppCompatActivity {
             }
         }).start();
 
+
     }
+
 
     private void speakText() {
 
@@ -370,7 +437,6 @@ public class FindBusStation extends AppCompatActivity {
         tts.stop();
         startActivity(intent);
     }
-
 
     public void NoButtonClicked(View view) {
         // 아니오 버튼을 누르면 다음 정류장 추천
