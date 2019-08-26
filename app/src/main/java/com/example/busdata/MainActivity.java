@@ -25,7 +25,7 @@ import java.util.TimerTask;
 public class MainActivity extends Activity {
 
     //기본 위젯들
-    EditText editBusStop;
+    //EditText editBusStop;
     TextView text;
     Button button;
     /**TextView gpsdata;
@@ -64,13 +64,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         //변수 레이아웃 연결
-        editBusStop = (EditText) findViewById(R.id.edit);
+        //editBusStop = (EditText) findViewById(R.id.edit);
         text = (TextView) findViewById(R.id.text);
         /**gpsdata = findViewById(R.id.gps);
         stationdata = findViewById(R.id.bus_station);
         internet = findViewById(R.id.internet);*/
 
-        button = findViewById(R.id.button);
+        //button = findViewById(R.id.button);
 
 
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
         timer.schedule(tt, 0, 60000);
 
         //editText창에 찾아낸 현재 버스정류장 이름 + 번호 띄워줌. --> 디버깅용
-        editBusStop.setText(FindBusStation.sName + " " + FindBusStation.sKey);
+        //editBusStop.setText(FindBusStation.sName + " " + FindBusStation.sKey);
     }
 
 
@@ -172,13 +172,13 @@ public class MainActivity extends Activity {
                         //http://stackoverflow.com/a/29777304 참고
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             if(data1.contentEquals("")) {
-                                ttsGreater21("5분 이내에 도착하는 버스가 없습니다.");
+                                ttsGreater21("10분 이내에 도착하는 버스가 없습니다.");
                             } else {
                                 ttsGreater21(data);
                             }
                         } else {
                             if (data1.contentEquals("")) {
-                                ttsUnder20("5분 이내에 도착하는 버스가 없습니다.");
+                                ttsUnder20("10분 이내에 도착하는 버스가 없습니다.");
                             } else {
                                 ttsUnder20(data);
                             }

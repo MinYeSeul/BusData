@@ -4,11 +4,12 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
+    android:background="@color/darkBlack"
     tools:context=".FindBusStation">
 
     <TextView
         android:id="@+id/station_name"
-        android:textColor="#000000"
+        android:textColor="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
@@ -26,34 +27,44 @@
         <Button
             android:id="@+id/yesbtn"
             android:text="예"
-            android:textColor="#000000"
+            android:textColor="#ffffff"
+            android:background="@drawable/bg_btn"
             android:onClick="YesButtonClicked"
             android:textSize="35sp"
             android:textStyle="bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_width="292dp"
+            android:layout_height="78dp" />
 
         <Button
             android:id="@+id/nobtn"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="30dp"
             android:text="아니오"
+            android:background="@drawable/bg_btn"
             android:onClick="NoButtonClicked"
-            android:textColor="#000000"
+            android:textColor="#ffffff"
             android:textSize="35sp"
             android:textStyle="bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_width="292dp"
+            android:layout_height="78dp" />
 
         <Button
             android:id="@+id/reDobtn"
-            android:layout_marginTop="5dp"
             android:text="다시하기"
             android:onClick="redo"
-            android:textColor="#000000"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="30dp"
+            android:textColor="#ffffff"
+            android:background="@drawable/bg_btn"
             android:textSize="35sp"
             android:textStyle="bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="292dp"
+            android:layout_height="78dp"
             />
 
     </LinearLayout>

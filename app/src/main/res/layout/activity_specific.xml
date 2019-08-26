@@ -5,6 +5,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/darkBlack"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -23,9 +24,10 @@
         <TextView
             android:id="@+id/busdata"
             android:layout_width="match_parent"
-            android:textColor="#000000"
+            android:height="75dp"
+            android:textColor="#ffffff"
             android:layout_height="match_parent"
-            android:textSize="25sp"
+            android:textSize="33sp"
             android:textStyle="bold" />
 
 

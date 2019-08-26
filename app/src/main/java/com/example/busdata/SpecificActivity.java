@@ -42,7 +42,7 @@ public class SpecificActivity extends AppCompatActivity {
         // 0보다 크다면 textdata에 추가해주기
         for(int i = 0; i < dataN.length; i++) {
             if(dataN[i] > 0) {
-                textdata.append(ListViewActivity.busNumber + "번 버스가 " + dataN[i] + "분 뒤에 도착합니다.\n\n");
+                textdata.append(ListViewActivity.busNumber + "번 버스가" + "\n" + dataN[i] + "분 뒤에 도착합니다.\n\n");
             }
         }
 

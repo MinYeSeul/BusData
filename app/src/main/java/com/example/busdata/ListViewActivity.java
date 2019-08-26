@@ -80,7 +80,7 @@ public class ListViewActivity extends AppCompatActivity {
                                 list.add(busnum.get(i) + " 번 버스");
                             }
                         }
-                        list.add("항목 중에 없는 버스는 도착정보가 없습니다.");
+                        list.add("항목 중에 없는 버스는" + "\n" + "도착정보가 없는 버스 입니다.");
                         Log.d("버스정보", busnum.toString());
                         Log.d("버스정보", busmin.toString());
 
@@ -90,7 +90,7 @@ public class ListViewActivity extends AppCompatActivity {
                         // 우선 ArrayList 객체를 ArrayAdapter 객체에 연결합니다.
                         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                                 ListViewActivity.this, //context(액티비티 인스턴스)
-                                android.R.layout.simple_list_item_1, // 한 줄에 하나의 텍스트 아이템만 보여주는 레이아웃 파일
+                                R.layout.single_list_item_1, // 한 줄에 하나의 텍스트 아이템만 보여주는 레이아웃 파일
                                 // 한 줄에 보여지는 아이템 갯수나 구성을 변경하려면 여기에 새로만든 레이아웃을 지정하면 됩니다.
                                 list  // 데이터가 저장되어 있는 ArrayList 객체
                         );
@@ -112,7 +112,7 @@ public class ListViewActivity extends AppCompatActivity {
 
                                 for (int i = 0; i < list.size(); i++) {
 
-                                    if (selected_item.equals("항목 중에 없는 버스는 도착정보가 없습니다.")) {
+                                    if (selected_item.equals("항목 중에 없는 버스는" + "\n" + "도착정보가 없는 버스 입니다.")) {
 
                                     }
                                     // 선택된 아이템이 list의 아이템과 같다면
