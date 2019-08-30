@@ -64,7 +64,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/text"
+            android:id="@+id/text_ggd"
             android:layout_width="292dp"
             android:layout_height="match_parent"
             android:layout_marginTop="14dp"

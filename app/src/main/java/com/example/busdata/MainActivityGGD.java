@@ -24,15 +24,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class MainActivity extends Activity {
+public class MainActivityGGD extends Activity {
 
     //기본 위젯들
     //EditText editBusStop;
     TextView text;
     Button button;
     /**TextView gpsdata;
-    TextView stationdata;
-    TextView internet;*/
+     TextView stationdata;
+     TextView internet;*/
 
 
     //공공데이터 API 사용을 위한 키값
@@ -69,8 +69,8 @@ public class MainActivity extends Activity {
         //editBusStop = (EditText) findViewById(R.id.edit);
         text = (TextView) findViewById(R.id.text);
         /**gpsdata = findViewById(R.id.gps);
-        stationdata = findViewById(R.id.bus_station);
-        internet = findViewById(R.id.internet);*/
+         stationdata = findViewById(R.id.bus_station);
+         internet = findViewById(R.id.internet);*/
 
         //button = findViewById(R.id.button);
 
@@ -152,16 +152,16 @@ public class MainActivity extends Activity {
                         //stationdata.setText(FindBusStation.sKey + " " + FindBusStation.sName);
 
                         /**if(longitude != 0.0 && latitude != 0.0) {
-                            gpsdata.setText(longitude + "\n" + latitude + "");
-                        } else {
-                            gpsdata.setText("gps를 가져오지 못함");
-                        }*/
+                         gpsdata.setText(longitude + "\n" + latitude + "");
+                         } else {
+                         gpsdata.setText("gps를 가져오지 못함");
+                         }*/
 
                         /**if(xpp == null) {
-                            internet.setText("인터넷 널값");
-                        } else {
-                            internet.setText("인터넷 연결 성공");
-                        }*/
+                         internet.setText("인터넷 널값");
+                         } else {
+                         internet.setText("인터넷 연결 성공");
+                         }*/
 
 
 
@@ -200,9 +200,8 @@ public class MainActivity extends Activity {
 
         //공공기관 데이터 가져오는 url형식, stationName에 nodeid를 GPS기능으로 찾아서 저장하면, 그 정보를 이용해서
         //도착정보 조회서비스의 정류소별 도착 예정 정보 목록 조회 API를 검색해서 버스 정보를 가져오기 위해, url만들기
-        String queryUrl = "http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList?"//요청 URL
-                + "&cityCode=" +
-                "" + "&nodeId=" + FindBusStation.sCode + "&ServiceKey=" + key;
+        String queryUrl = "http://openapi.gbis.go.kr/ws/rest/busarrivalservice/station?"//요청 URL
+                + "serviceKey=" + key + "&stationId" + FindBusStationGGD.sCode.substring(3);
         Log.d("디버깅", queryUrl);
 
         try {
@@ -240,14 +239,13 @@ public class MainActivity extends Activity {
                         tag = xpp.getName();
                         // 첫번째 검색결과
                         if (tag.equals("item")) ;
-
-                        //태그의 이름이 arrtime이면,
-                        else if (tag.equals("arrtime")) {
+                            //태그의 이름이 arrtime이면,
+                        else if (tag.equals("predictTime1")) {
                             //buffer.append("도착예정버스 도착예상시간[초] : ");
                             //그 옆의
                             xpp.next();
                             //초를 가져와서 분으로 바꿈
-                            minute = Integer.parseInt(xpp.getText()) / 60;
+                            minute = Integer.parseInt(xpp.getText());
 
                             // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 세팅
                             if (minute > 10) check = false;
@@ -259,12 +257,12 @@ public class MainActivity extends Activity {
                             }
                             //다시 반복문 올라갔다가, item 태그의 이름별로 찾음.
                         } /** else if (tag.equals("nodenm")) {
-                            //buffer.append("정류소명 :");
-                            xpp.next();
-                            buffer.append(xpp.getText() + "정류소에");
-                            buffer.append("\n");
-                            //... 아런식으로 반복해서 API에서 필요한 정보 변수에 저장
-                        } */else if (tag.equals("routeno")) {
+                         //buffer.append("정류소명 :");
+                         xpp.next();w
+                         buffer.append(xpp.getText() + "정류소에");
+                         buffer.append("\n");
+                         //... 아런식으로 반복해서 API에서 필요한 정보 변수에 저장
+                         } */else if (tag.equals("routeno")) {
                             if (check) {
                                 //buffer.append("버스번호 :");
                                 xpp.next();
@@ -272,11 +270,11 @@ public class MainActivity extends Activity {
                                 buffer.append("\n");
                             }
                         } /** else if (tag.equals("vehicletp")) {
-                            buffer.append("도착예정버스 차량유형은 :");
-                            xpp.next();
-                            buffer.append(xpp.getText());//
-                            buffer.append("\n");
-                        } */
+                     buffer.append("도착예정버스 차량유형은 :");
+                     xpp.next();
+                     buffer.append(xpp.getText());//
+                     buffer.append("\n");
+                     } */
 
                         break;
 

@@ -40,7 +40,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class FindBusStation extends AppCompatActivity {
+public class FindBusStationGGD extends AppCompatActivity {
     //공공데이터 API 사용을 위한 키값
     String key = "e%2FQrc7xl69032umSPCCM%2Fhq3R1fAEIBE3mD3mJ0eh0i8yebcATke1K9uypKsOT4NeqBGZ4Rva18S%2F%2Fon6Mcu6A%3D%3D";
 
@@ -300,7 +300,7 @@ public class FindBusStation extends AppCompatActivity {
         //API버전확인
         if (Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(FindBusStation.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+            ActivityCompat.requestPermissions(FindBusStationGGD.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     0);
         }
 
