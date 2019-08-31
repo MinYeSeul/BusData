@@ -859,7 +859,7 @@ public class FindSeoulActivity extends AppCompatActivity {
 
 
 
-            busStation.setText("GPS가 정확하지 않습니다. 다시 시도해주세요.");
+            busStation.setText("GPS가 정확하지 않습니다.\n다시 시도해주세요.");
 
             // 읽어주기
 

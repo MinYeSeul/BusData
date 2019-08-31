@@ -267,8 +267,8 @@ public class FindBusStationGGD extends AppCompatActivity {
                 ttsGreater21("GPS 연결이 되어있지 않습니다.");
             }
 
-            else if (busStation.getText() == "GPS가 정확하지 않습니다. 다시 시도해주세요.") {
-                ttsGreater21("GPS가 정확하지 않습니다. 다시 시도해주세요.");
+            else if (busStation.getText() == "GPS가 정확하지 않습니다.\n다시 시도해주세요.") {
+                ttsGreater21("GPS가 정확하지 않습니다.\n다시 시도해주세요.");
             }
             //인터넷과 GPS 정보를 가져와 똑바로 작동했을 경우 TTS
             else {
@@ -281,8 +281,8 @@ public class FindBusStationGGD extends AppCompatActivity {
                 ttsUnder20("GPS 연결이 되어있지 않습니다.");
             }
 
-            else if (busStation.getText() == "GPS가 정확하지 않습니다. 다시 시도해주세요.") {
-                ttsUnder20("GPS가 정확하지 않습니다. 다시 시도해주세요.");
+            else if (busStation.getText() == "GPS가 정확하지 않습니다.\n다시 시도해주세요.") {
+                ttsUnder20("GPS가 정확하지 않습니다.\n다시 시도해주세요.");
             }
             //인터넷과 GPS 정보를 가져와 똑바로 작동했을 경우 TTS
             else {
@@ -469,7 +469,7 @@ public class FindBusStationGGD extends AppCompatActivity {
             yesbtn.setVisibility(View.INVISIBLE);
             nobtn.setVisibility(View.INVISIBLE);
 
-            busStation.setText("GPS가 정확하지 않습니다. 다시 시도해주세요.");
+            busStation.setText("GPS가 정확하지 않습니다.\n다시 시도해주세요.");
             // 읽어주기
             speakText();
 

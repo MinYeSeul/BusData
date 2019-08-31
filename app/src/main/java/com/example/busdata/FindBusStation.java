@@ -171,10 +171,6 @@ public class FindBusStation extends AppCompatActivity {
             }
         });
 
-
-        tts.stop();
-
-
         reDobtn.setEnabled(false);
         reDobtn.setVisibility(View.INVISIBLE);
 
@@ -187,13 +183,25 @@ public class FindBusStation extends AppCompatActivity {
             @Override
             public void run() {
                 getStationData();
-                //Log.d("디버깅2", stationKey.get(0) + "" + stationName.get(0));
+                Log.d("디버깅2", stationKey.get(0) + "" + stationName.get(0));
+
 
                 runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
-                        if (stationName.size() == 0 || stationKey.size() == 0) {
+                        if (stationName.size() != 0 || stationKey.size() != 0) {
+                            stationName.removeAll(remove);
+
+                            busStation.setText("현재 위치한 버스정류장이\n" +stationName.get(0) + " " + stationKey.get(0) + "\n입니까?");
+
+                            sKey = stationKey.get(0);
+                            sName = stationName.get(0);
+                            sCode = stationCode.get(0);
+
+                            speakText();
+                        }
+                        else {
                             if (!networkCheck) {
                                 busStation.setText("네트워크 연결이 되어있지 않습니다.");
 
@@ -224,16 +232,6 @@ public class FindBusStation extends AppCompatActivity {
                                 reDobtn.setEnabled(true);
                                 reDobtn.setVisibility(View.VISIBLE);
                             }
-                        }
-                        else {
-                            stationName.removeAll(remove);
-
-                            busStation.setText("현재 위치한 버스정류장이\n" +stationName.get(0) + " " + stationKey.get(0) + "\n입니까?");
-                            sKey = stationKey.get(0);
-                            sName = stationName.get(0);
-                            sCode = stationCode.get(0);
-
-                            speakText();
                         }
                     }
                 });
@@ -266,8 +264,8 @@ public class FindBusStation extends AppCompatActivity {
                 ttsGreater21("GPS 연결이 되어있지 않습니다.");
             }
 
-            else if (busStation.getText() == "GPS가 정확하지 않습니다. 다시 시도해주세요.") {
-                ttsGreater21("GPS가 정확하지 않습니다. 다시 시도해주세요.");
+            else if (busStation.getText() == "GPS가 정확하지 않습니다.\n다시 시도해주세요.") {
+                ttsGreater21("GPS가 정확하지 않습니다.\n다시 시도해주세요.");
             }
             //인터넷과 GPS 정보를 가져와 똑바로 작동했을 경우 TTS
             else {
@@ -280,8 +278,8 @@ public class FindBusStation extends AppCompatActivity {
                 ttsUnder20("GPS 연결이 되어있지 않습니다.");
             }
 
-            else if (busStation.getText() == "GPS가 정확하지 않습니다. 다시 시도해주세요.") {
-                ttsUnder20("GPS가 정확하지 않습니다. 다시 시도해주세요.");
+            else if (busStation.getText() == "GPS가 정확하지 않습니다.\n다시 시도해주세요.") {
+                ttsUnder20("GPS가 정확하지 않습니다.\n다시 시도해주세요.");
             }
             //인터넷과 GPS 정보를 가져와 똑바로 작동했을 경우 TTS
             else {
@@ -355,12 +353,12 @@ public class FindBusStation extends AppCompatActivity {
 
             URL url = new URL(queryUrl);
             InputStream is2 = url.openStream();
-
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             XmlPullParser xpp = factory.newPullParser();
 
 
             xpp.setInput(new InputStreamReader(is2, "UTF-8"));
+
 
             String tag;
 
@@ -466,7 +464,7 @@ public class FindBusStation extends AppCompatActivity {
             yesbtn.setVisibility(View.INVISIBLE);
             nobtn.setVisibility(View.INVISIBLE);
 
-            busStation.setText("GPS가 정확하지 않습니다. 다시 시도해주세요.");
+            busStation.setText("GPS가 정확하지 않습니다.\n다시 시도해주세요.");
             // 읽어주기
             speakText();
 

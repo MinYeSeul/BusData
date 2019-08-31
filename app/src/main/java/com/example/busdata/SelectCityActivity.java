@@ -48,33 +48,14 @@ public class SelectCityActivity extends AppCompatActivity{
                 if (status != TextToSpeech.ERROR) {
                     tts.setLanguage(Locale.KOREAN);
                     //tts.setLanguage(Locale.ENGLISH);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ttsGreater21("버스정보를 확인할 지역을 선택해주세요.");
+                    } else {
+                        ttsUnder20("버스정보를 확인할 지역을 선택해주세요.");
+                    }
                 }
             }
         });
-
-
-        new Thread(new Runnable() {
-            @TargetApi(Build.VERSION_CODES.O)
-            @Override
-            public void run() {
-                //Log.d("디버깅2", stationKey.get(0) + "" + stationName.get(0));
-
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        //http://stackoverflow.com/a/29777304 참고
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            ttsGreater21("지역을 선택해주세요.");
-                        } else {
-                            ttsUnder20("지역을 선택해주세요.");
-                        }
-                    }
-                });
-            }
-        }).start();
-
 
         // 4. ArrayList 객체에 데이터를 집어넣습니다.
         list.add("서울특별시");
@@ -115,12 +96,12 @@ public class SelectCityActivity extends AppCompatActivity{
                 else if(selected_item.equals(list.get(1))){
                     Log.d("경기도", selected_item);
 
-                    Intent intent2 = new Intent(getApplicationContext(), FindBusStationGGD.class);
-                    startActivity(intent2);
+                    Intent intent = new Intent(getApplicationContext(), FindBusStationGGD.class);
+                    startActivity(intent);
                 }
                 else if(selected_item.equals(list.get(2))){
-                    Intent intent2 = new Intent(getApplicationContext(), FindBusStation.class);
-                    startActivity(intent2);
+                    Intent intent = new Intent(getApplicationContext(), FindBusStation.class);
+                    startActivity(intent);
 
                 }
             }

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class ListViewActivity extends AppCompatActivity {
 
     //공공데이터 API 사용을 위한 키값
-    String key = "QzQ64Y0ttlhXPP7CVvMZKf6NKxitNjOameIBPVADX4f9%2FxPRnLqZkDljqmpTROuyOCabJF8ncXbxDqHGEFAtPA%3D%3D";
+    String key = "%2FKReIqvp2vGGLYmi%2BvcwqXbxyHJSZRJN84Bj04su%2FHz3wFhIv4EB4nKnRi9oF8MwSXoBKb%2BO2W6txBpUC6bE0w%3D%3D";
 
     // 파싱 변수
     XmlPullParser xpp;

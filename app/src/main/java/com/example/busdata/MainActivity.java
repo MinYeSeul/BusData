@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
 
 
     //공공데이터 API 사용을 위한 키값
-    String key = "QzQ64Y0ttlhXPP7CVvMZKf6NKxitNjOameIBPVADX4f9%2FxPRnLqZkDljqmpTROuyOCabJF8ncXbxDqHGEFAtPA%3D%3D";
+    String key = "%2FKReIqvp2vGGLYmi%2BvcwqXbxyHJSZRJN84Bj04su%2FHz3wFhIv4EB4nKnRi9oF8MwSXoBKb%2BO2W6txBpUC6bE0w%3D%3D";
 
     //공공데이터 API에서 가져오는 데이터
     String data;
@@ -83,6 +83,7 @@ public class MainActivity extends Activity {
                 }
             }
         });
+        tts.stop();
 
 //        바로 음성이 나와야 되니까 버튼 필요 없어서 주석으로 뺐습니다.
 //        button2.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +93,6 @@ public class MainActivity extends Activity {
 //                switch( v.getId() ){
 //                    case R.id.button2:
 
-        tts.stop();
 
         getArrivalData();
 
@@ -123,9 +123,17 @@ public class MainActivity extends Activity {
             public void run() {
                 //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기
                 data1 = getXmlData();
-                Log.d("왜안돼", data1);
 
-                if(!data1.contentEquals("")) {
+                if(data1.contentEquals((""))) {
+                    //http://stackoverflow.com/a/29777304 참고
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        ttsGreater21("10분 이내에 도착하는 버스가 없습니다.");
+                    }
+                    else {
+                        ttsUnder20("10분 이내에 도착하는 버스가 없습니다.");
+                    }
+                }
+                else {
                     //빨리 오는 버스 순서대로 정렬하기 위해 stringArray 선언
                     String[] stringArray = data1.split(" \n");
                     //sorting해주기 위한 반복문
@@ -165,8 +173,6 @@ public class MainActivity extends Activity {
                             internet.setText("인터넷 연결 성공");
                         }*/
 
-
-
                         //data가 비었을 경우 도착 정보가 없음 표시
                         if(data1.contentEquals("")) {
                             text.setText("10분 이내에 도착하는 버스가 없습니다.");
@@ -199,8 +205,6 @@ public class MainActivity extends Activity {
     private String getXmlData() {
         //버퍼 변수 선언, 스트링형으로 만들어져있음, 모든 정보 저장후 한번에 버퍼 출력 하는 형식
         StringBuffer buffer = new StringBuffer();
-        Log.d("왜안돼", "getXmlData들어왔음");
-
         //공공기관 데이터 가져오는 url형식, stationName에 nodeid를 GPS기능으로 찾아서 저장하면, 그 정보를 이용해서
         //도착정보 조회서비스의 정류소별 도착 예정 정보 목록 조회 API를 검색해서 버스 정보를 가져오기 위해, url만들기
         String queryUrl = "http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList?"//요청 URL

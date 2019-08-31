@@ -16,9 +16,7 @@
         android:orientation="horizontal"
         android:weightSum="10"></LinearLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <TextView
             android:id="@+id/busdata"
@@ -30,6 +28,6 @@
             android:textStyle="bold" />
 
 
-    </ScrollView>
+
 
 </LinearLayout>
