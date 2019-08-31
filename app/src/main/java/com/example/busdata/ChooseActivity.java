@@ -11,7 +11,7 @@ public class ChooseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose_ggd);
+        setContentView(R.layout.activity_choose);
 
         //https://ande226.tistory.com/141
         //ActionBar로 뒤로가기 버튼 추가

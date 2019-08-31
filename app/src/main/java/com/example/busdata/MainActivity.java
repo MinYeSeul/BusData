@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
 
 
     //공공데이터 API 사용을 위한 키값
-    String key = "e%2FQrc7xl69032umSPCCM%2Fhq3R1fAEIBE3mD3mJ0eh0i8yebcATke1K9uypKsOT4NeqBGZ4Rva18S%2F%2Fon6Mcu6A%3D%3D";
+    String key = "QzQ64Y0ttlhXPP7CVvMZKf6NKxitNjOameIBPVADX4f9%2FxPRnLqZkDljqmpTROuyOCabJF8ncXbxDqHGEFAtPA%3D%3D";
 
     //공공데이터 API에서 가져오는 데이터
     String data;
@@ -123,6 +123,8 @@ public class MainActivity extends Activity {
             public void run() {
                 //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기
                 data1 = getXmlData();
+                Log.d("왜안돼", data1);
+
                 if(!data1.contentEquals("")) {
                     //빨리 오는 버스 순서대로 정렬하기 위해 stringArray 선언
                     String[] stringArray = data1.split(" \n");
@@ -197,12 +199,12 @@ public class MainActivity extends Activity {
     private String getXmlData() {
         //버퍼 변수 선언, 스트링형으로 만들어져있음, 모든 정보 저장후 한번에 버퍼 출력 하는 형식
         StringBuffer buffer = new StringBuffer();
+        Log.d("왜안돼", "getXmlData들어왔음");
 
         //공공기관 데이터 가져오는 url형식, stationName에 nodeid를 GPS기능으로 찾아서 저장하면, 그 정보를 이용해서
         //도착정보 조회서비스의 정류소별 도착 예정 정보 목록 조회 API를 검색해서 버스 정보를 가져오기 위해, url만들기
         String queryUrl = "http://openapi.tago.go.kr/openapi/service/ArvlInfoInqireService/getSttnAcctoArvlPrearngeInfoList?"//요청 URL
-                + "&cityCode=" +
-                "" + "&nodeId=" + FindBusStation.sCode + "&ServiceKey=" + key;
+                + "&cityCode=" + "37010" + "&nodeId=" + FindBusStation.sCode + "&ServiceKey=" + key;
         Log.d("디버깅", queryUrl);
 
         try {
@@ -248,6 +250,7 @@ public class MainActivity extends Activity {
                             xpp.next();
                             //초를 가져와서 분으로 바꿈
                             minute = Integer.parseInt(xpp.getText()) / 60;
+                            Log.d("왜안돼", minute+"");
 
                             // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 세팅
                             if (minute > 10) check = false;
@@ -257,6 +260,8 @@ public class MainActivity extends Activity {
                                 buffer.append(minute + "" + "분 뒤에");
                                 buffer.append("\n");
                             }
+                            Log.d("왜안돼", minute+"");
+
                             //다시 반복문 올라갔다가, item 태그의 이름별로 찾음.
                         } /** else if (tag.equals("nodenm")) {
                             //buffer.append("정류소명 :");
