@@ -11,7 +11,7 @@ public class ChooseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_choose);
+        setContentView(R.layout.activity_choose_ggd);
 
         //https://ande226.tistory.com/141
         //ActionBar로 뒤로가기 버튼 추가
@@ -21,7 +21,7 @@ public class ChooseActivity extends AppCompatActivity {
 
     }
 
-    // 5분 뒤에 도착하는 모든 버스 버튼을 눌렀을 때 실행됨
+    // 10분 이내에 도착하는 모든 버스 버튼을 눌렀을 때 실행됨
     public void mincall(View view) {
         // MainActivity 와 연결
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

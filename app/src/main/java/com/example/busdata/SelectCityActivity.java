@@ -6,6 +6,7 @@ import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -102,15 +103,26 @@ public class SelectCityActivity extends AppCompatActivity{
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> adapterView,
-                                    View view, int position, long id) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                Intent intent = new Intent(getApplicationContext(), FindBusStation.class);
-                startActivity(intent);
+                // 8. 클릭한 아이템의 문자열을 가져와서
+                String selected_item = (String) adapterView.getItemAtPosition(position);
 
+                if (selected_item.equals(list.get(0))) {
+                    Intent intent = new Intent(getApplicationContext(), FindSeoulActivity.class);
+                    startActivity(intent);
+                }
+                else if(selected_item.equals(list.get(1))){
+                    Log.d("경기도", selected_item);
 
-                // 10. 어댑터 객체에 변경 내용을 반영시켜줘야 에러가 발생하지 않습니다.
-                adapter.notifyDataSetChanged();
+                    Intent intent2 = new Intent(getApplicationContext(), FindBusStationGGD.class);
+                    startActivity(intent2);
+                }
+                else if(selected_item.equals(list.get(2))){
+                    Intent intent2 = new Intent(getApplicationContext(), FindBusStation.class);
+                    startActivity(intent2);
+
+                }
             }
         });
 

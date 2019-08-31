@@ -18,6 +18,8 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Timer;
@@ -34,9 +36,13 @@ public class MainActivityGGD extends Activity {
      TextView stationdata;
      TextView internet;*/
 
+    ArrayList<Integer> predictTimes = new ArrayList<Integer>();
+    ArrayList<String> routeNames = new ArrayList<String>();
+    ArrayList<String> routeIds = new ArrayList<String>();
+
 
     //공공데이터 API 사용을 위한 키값
-    String key = "e%2FQrc7xl69032umSPCCM%2Fhq3R1fAEIBE3mD3mJ0eh0i8yebcATke1K9uypKsOT4NeqBGZ4Rva18S%2F%2Fon6Mcu6A%3D%3D";
+    String key = "vrJZqsh%2BKv7FlarxXBLEYW4UQX1wPAkf%2F8dXw0RWsgFNNONsQqS%2Bc%2BigEfCod9rbDQpKAdaYTRfFuBwMtu3nBA%3D%3D";
 
     //공공데이터 API에서 가져오는 데이터
     String data;
@@ -63,11 +69,11 @@ public class MainActivityGGD extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_ggd);
 
         //변수 레이아웃 연결
         //editBusStop = (EditText) findViewById(R.id.edit);
-        text = (TextView) findViewById(R.id.text);
+        text = (TextView) findViewById(R.id.text_ggd);
         /**gpsdata = findViewById(R.id.gps);
          stationdata = findViewById(R.id.bus_station);
          internet = findViewById(R.id.internet);*/
@@ -93,6 +99,7 @@ public class MainActivityGGD extends Activity {
 //                    case R.id.button2:
 
         tts.stop();
+        Log.d("경기도", "ㄷㄹㅇ");
 
         getArrivalData();
 
@@ -100,13 +107,16 @@ public class MainActivityGGD extends Activity {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
+                routeIds.clear();
+                routeNames.clear();
+                predictTimes.clear();
                 getArrivalData();
             }
         };
 
         // 버스도착예정시간을 새로고침하기 위한 타이머 _ 1분 간격으로 업데이트되도록 함.
         Timer timer = new Timer();
-        timer.schedule(tt, 0, 60000);
+        timer.schedule(tt, 60000, 60000);
 
         //editText창에 찾아낸 현재 버스정류장 이름 + 번호 띄워줌. --> 디버깅용
         //editBusStop.setText(FindBusStation.sName + " " + FindBusStation.sKey);
@@ -122,27 +132,20 @@ public class MainActivityGGD extends Activity {
             @Override
             public void run() {
                 //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기
-                data1 = getXmlData();
-                if(!data1.contentEquals("")) {
-                    //빨리 오는 버스 순서대로 정렬하기 위해 stringArray 선언
-                    String[] stringArray = data1.split(" \n");
-                    //sorting해주기 위한 반복문
-                    for (int j = 0; j < stringArray.length - 1; j++) {
-                        for (int i = 0; i < stringArray.length - 1 - j; i++) {
-                            //빨리 도착하는 순서로 바꿔주기
-                            if (Integer.parseInt(stringArray[i].split("분")[0] + "") > Integer.parseInt(stringArray[i + 1].split("분")[0])) {
-                                String temp;
-                                temp = stringArray[i];
-                                stringArray[i] = stringArray[i + 1];
-                                stringArray[i + 1] = temp;
-                            }
-                        }
-                    }
+                getXmlData();
+                //버스번호를 알아오기 위해서 api사용
+                getXmlData2();
+                Log.d("배열 크기 비교",routeIds.size() + " " + routeNames.size() + " " + predictTimes.size());
 
-                    data = "";
-                    for (int k = 0; k < stringArray.length; k++) {
-                        data = data + stringArray[k] + " \n";
+                data = "";
+                Collections.sort(predictTimes);
+                for(int i=0;i<routeNames.size();i++) {
+                    if(predictTimes.get(i) > 10){
+                        predictTimes.remove(i);
+                        routeNames.remove(i);
+                        routeIds.remove(i);
                     }
+                    else data += predictTimes.get(i) + "분 뒤에 " + routeNames.get(i) + "번 버스가 도착합니다.\n\n";
                 }
                 runOnUiThread(new Runnable() {
 
@@ -166,7 +169,7 @@ public class MainActivityGGD extends Activity {
 
 
                         //data가 비었을 경우 도착 정보가 없음 표시
-                        if(data1.contentEquals("")) {
+                        if(data.contentEquals("")) {
                             text.setText("10분 이내에 도착하는 버스가 없습니다.");
                         } else {
                             //TextView에 문자열 data 출력
@@ -174,13 +177,13 @@ public class MainActivityGGD extends Activity {
                         }
                         //http://stackoverflow.com/a/29777304 참고
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            if(data1.contentEquals("")) {
+                            if(data.contentEquals("")) {
                                 ttsGreater21("10분 이내에 도착하는 버스가 없습니다.");
                             } else {
                                 ttsGreater21(data);
                             }
                         } else {
-                            if (data1.contentEquals("")) {
+                            if (data.contentEquals("")) {
                                 ttsUnder20("10분 이내에 도착하는 버스가 없습니다.");
                             } else {
                                 ttsUnder20(data);
@@ -201,8 +204,8 @@ public class MainActivityGGD extends Activity {
         //공공기관 데이터 가져오는 url형식, stationName에 nodeid를 GPS기능으로 찾아서 저장하면, 그 정보를 이용해서
         //도착정보 조회서비스의 정류소별 도착 예정 정보 목록 조회 API를 검색해서 버스 정보를 가져오기 위해, url만들기
         String queryUrl = "http://openapi.gbis.go.kr/ws/rest/busarrivalservice/station?"//요청 URL
-                + "serviceKey=" + key + "&stationId" + FindBusStationGGD.sCode.substring(3);
-        Log.d("디버깅", queryUrl);
+                + "serviceKey=" + key + "&stationId=" + FindBusStationGGD.sCode.substring(3);
+        Log.d("경기도", FindBusStationGGD.sCode.substring(3));
 
         try {
             //문자열로 된 요청 url을 URL 객체로 생성.
@@ -238,7 +241,7 @@ public class MainActivityGGD extends Activity {
                         //태그 이름 얻어오기
                         tag = xpp.getName();
                         // 첫번째 검색결과
-                        if (tag.equals("item")) ;
+                        if (tag.equals("busArrivalList")) ;
                             //태그의 이름이 arrtime이면,
                         else if (tag.equals("predictTime1")) {
                             //buffer.append("도착예정버스 도착예상시간[초] : ");
@@ -246,30 +249,26 @@ public class MainActivityGGD extends Activity {
                             xpp.next();
                             //초를 가져와서 분으로 바꿈
                             minute = Integer.parseInt(xpp.getText());
+                            Log.d("분",minute+"");
 
-                            // 5분 이내에 오는 버스만 읽고 출력하도록 check 라는 boolean 함수를 세팅
-                            if (minute > 10) check = false;
-                            else check = true;
-                            //버퍼에 순서대로 출력하고 싶은 형식으로 저장,
-                            if (check) {
-                                buffer.append(minute + "" + "분 뒤에");
-                                buffer.append("\n");
-                            }
+                            predictTimes.add(minute);
+
                             //다시 반복문 올라갔다가, item 태그의 이름별로 찾음.
-                        } /** else if (tag.equals("nodenm")) {
-                         //buffer.append("정류소명 :");
-                         xpp.next();w
-                         buffer.append(xpp.getText() + "정류소에");
-                         buffer.append("\n");
-                         //... 아런식으로 반복해서 API에서 필요한 정보 변수에 저장
-                         } */else if (tag.equals("routeno")) {
+                        }  else if (tag.equals("routeId")) {
+                            //buffer.append("정류소명 :");
+                            xpp.next();
+                            routeIds.add(xpp.getText());
+                            Log.d("아이디",xpp.getText());
+                            //... 아런식으로 반복해서 API에서 필요한 정보 변수에 저장
+                        }
+                        /*else if (tag.equals("routeno")) {
                             if (check) {
                                 //buffer.append("버스번호 :");
                                 xpp.next();
                                 buffer.append(xpp.getText() + "번 버스가 도착합니다");
                                 buffer.append("\n");
                             }
-                        } /** else if (tag.equals("vehicletp")) {
+                        }*/ /** else if (tag.equals("vehicletp")) {
                      buffer.append("도착예정버스 차량유형은 :");
                      xpp.next();
                      buffer.append(xpp.getText());//
@@ -297,6 +296,85 @@ public class MainActivityGGD extends Activity {
         }
         //buffer.append("파싱 끝\n");
         //StringBuffer 문자열 객체 반환
+        return buffer.toString();
+    }
+
+    private String getXmlData2() {
+        //버퍼 변수 선언, 스트링형으로 만들어져있음, 모든 정보 저장후 한번에 버퍼 출력 하는 형식
+        StringBuffer buffer = new StringBuffer();
+
+        for(int i=0;i<routeIds.size();i++) {
+
+            //공공기관 데이터 가져오는 url형식, stationName에 nodeid를 GPS기능으로 찾아서 저장하면, 그 정보를 이용해서
+            //도착정보 조회서비스의 정류소별 도착 예정 정보 목록 조회 API를 검색해서 버스 정보를 가져오기 위해, url만들기
+            String queryUrl = "http://openapi.gbis.go.kr/ws/rest/busrouteservice/info?"//요청 URL
+                    + "serviceKey=" + key + "&routeId=" + routeIds.get(i);
+            Log.d("url", queryUrl);
+
+            try {
+                //문자열로 된 요청 url을 URL 객체로 생성.
+                URL url = new URL(queryUrl);
+
+                //url위치로 입력스트림 연결
+                InputStream is = url.openStream();
+
+                //XML형식의 API를 파싱하는 라이브러리
+                //XML형식은 순차적으로 발생하기때문에 뒤로 못돌아가서 필요하면 변수에 미리 저장해둬야함.
+                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                xpp = factory.newPullParser();
+                //inputstream 으로부터 xml 입력받기
+                xpp.setInput(new InputStreamReader(is, "UTF-8"));
+
+                //XML 안에 들어가는 태그
+                String tag;
+
+                //태그 하나 내려감
+                xpp.next();
+                int eventType = xpp.getEventType();
+
+                //XML 끝이 아니라면
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    switch (eventType) {
+                        //파싱 시작알리기, 이벤트가 문서의 시작
+                        case XmlPullParser.START_DOCUMENT:
+                            buffer.append("파싱 시작...\n\n");
+                            break;
+
+                        //태그의 시작
+                        case XmlPullParser.START_TAG:
+                            //태그 이름 얻어오기
+                            tag = xpp.getName();
+                            // 첫번째 검색결과
+                            if (tag.equals("busRouteInfoItem")) ;
+                                //태그의 이름이 arrtime이면,
+                            else if (tag.equals("routeName")) {
+                                //buffer.append("도착예정버스 도착예상시간[초] : ");
+                                //그 옆의
+                                xpp.next();
+                                //초를 가져와서 분으로 바꿈
+                                Log.d("버스번호",xpp.getText());
+                                routeNames.add(xpp.getText());
+
+                            }
+                            break;
+
+                        //태그의 시작과 끝 사이에서 나타난다. 예: <data>여기서 텍스트 이벤트 발생</data>
+                        case XmlPullParser.TEXT:
+                            break;
+
+                        //이벤트가 문서의 끝
+                        case XmlPullParser.END_TAG:
+                            //태그 이름 얻어오기
+                            tag = xpp.getName();
+                            // 첫번째 검색결과종료..줄바꿈
+                            if (tag.equals("item") && check) buffer.append(" \n");
+                            break;
+                    }
+                    eventType = xpp.next();
+                }
+            } catch (Exception e) {
+            }
+        }
         return buffer.toString();
     }
 
