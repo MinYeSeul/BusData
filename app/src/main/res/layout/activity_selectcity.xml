@@ -20,6 +20,13 @@
         android:textSize="26sp"
         android:textStyle="bold" />
 
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:progress="50" />
+
     <ListView
         android:id="@+id/listview9"
         android:dividerHeight="2dp"

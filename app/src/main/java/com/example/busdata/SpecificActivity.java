@@ -60,9 +60,11 @@ public class SpecificActivity extends AppCompatActivity {
                     tts.setLanguage(Locale.KOREAN);
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    tts.setSpeechRate(SelectCityActivity.speachSpeed/50); //속도조절
                     ttsGreater21(textdata.getText().toString());
                 } else {
                     ttsUnder20(textdata.getText().toString());
+                    tts.setSpeechRate(SelectCityActivity.speachSpeed/50); //속도조절
                 }
             }
         });
@@ -98,6 +100,7 @@ public class SpecificActivity extends AppCompatActivity {
         //그냥 음성인식기술 해쉬맵에 넣어주는 코드
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
         //text 파라미터로 전달받은 인자를 해쉬맵이랑 연결해서 음성으로 바꿔서 말해줌
+        tts.setSpeechRate(SelectCityActivity.speachSpeed/50); //속도조절
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
     }
 
@@ -106,6 +109,7 @@ public class SpecificActivity extends AppCompatActivity {
     private void ttsGreater21(String text) {
         String utteranceId = this.hashCode() + "";
         //text 파라미터로 전달받은 인자를 음성으로 바꿔서 말해줌
+        tts.setSpeechRate(SelectCityActivity.speachSpeed/50); //속도조절
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
 
     }

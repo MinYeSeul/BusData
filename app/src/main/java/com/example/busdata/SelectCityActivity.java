@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +24,11 @@ public class SelectCityActivity extends AppCompatActivity{
 
     //TTS 변수
     TextToSpeech tts;
+    public static float speachSpeed; //빠르기 속도 변수
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         // 1. 레이아웃을 정의한 레이아웃 리소스(R.layout)을 사용하여 현재 액티비티의 화면을 구성하도록 합니다.
         setContentView(R.layout.activity_selectcity);
@@ -39,6 +40,9 @@ public class SelectCityActivity extends AppCompatActivity{
         ListView listview = (ListView)findViewById(R.id.listview9);
 
 
+
+
+
         // 3. 실제로 문자열 데이터를 저장하는데 사용할 ArrayList 객체를 생성합니다.
         final ArrayList<String> list = new ArrayList<>();
 
@@ -47,11 +51,31 @@ public class SelectCityActivity extends AppCompatActivity{
             public void onInit(int status) {
                 if (status != TextToSpeech.ERROR) {
                     tts.setLanguage(Locale.KOREAN);
+                    SeekBar sb = (SeekBar) findViewById(R.id.seekBar);
+                    sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                        }
+
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+                        }
+
+                        public void onProgressChanged(SeekBar seekBar, int progress,
+                                                      boolean fromUser) {
+                            speachSpeed = progress; // 바의 양의 따라 속도 변화
+                            tts.setSpeechRate(speachSpeed/50); //속도조절
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                ttsGreater21("속도조정" + progress + "%" );
+                            } else {
+                                ttsUnder20("속도조정" + progress + "%");
+                            }
+                        }
+                    });
+
                     //tts.setLanguage(Locale.ENGLISH);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        ttsGreater21("버스정보를 확인할 지역을 선택해주세요.");
+                        ttsGreater21("음성속도 조정 후 버스정보를 확인할 지역을 선택해주세요.");
                     } else {
-                        ttsUnder20("버스정보를 확인할 지역을 선택해주세요.");
+                        ttsUnder20("음성속도 조정 후 버스정보를 확인할 지역을 선택해주세요.");
                     }
                 }
             }
@@ -118,6 +142,7 @@ public class SelectCityActivity extends AppCompatActivity{
         //그냥 음성인식기술 해쉬맵에 넣어주는 코드
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
         //text 파라미터로 전달받은 인자를 해쉬맵이랑 연결해서 음성으로 바꿔서 말해줌
+        tts.setSpeechRate(speachSpeed/50); //속도조절
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, map);
     }
 
@@ -126,10 +151,10 @@ public class SelectCityActivity extends AppCompatActivity{
     private void ttsGreater21(String text) {
         String utteranceId = this.hashCode() + "";
         //text 파라미터로 전달받은 인자를 음성으로 바꿔서 말해줌
+        tts.setSpeechRate(speachSpeed/50); //속도조절
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
     }
 
 
 }
-
 
